@@ -1,0 +1,1210 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E1726">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Piloto A1/A3">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Piloto A1/A3 · Quiz AESA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F6F9; --card:#FFFFFF; --line:#DDE3EB; --line2:#EEF1F5; --ink:#0E1726; --ink2:#4A5568; --mute:#5B6475;
+  --blue:#1D4ED8; --blue2:#3B82F6; --bluet:#E3ECFD; --blued:#1E3A8A;
+  --ok:#0F7B5F; --okt:#E7F5EF; --okd:#0B4F3D;
+  --ko:#C2410C; --kot:#FDEDE4; --kod:#7C2D12;
+  --am:#B45309; --amt:#FEF3C7; --amd:#92400E; --tipbg:#FEF7E6; --tipink:#4A3200;
+  --dark:#0E1726; --dark2:#1F2A3D; --darkline:#4B5B74; --darkmute:#A9B7CC; --darkink2:#D5DEEA;
+  --track:#E6EBF2; --chip:#EEF1F5;
+  --head:"Space Grotesk", Inter, system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0B1220; --card:#121B2C; --line:#26324A; --line2:#1C273B; --ink:#E8EDF5; --ink2:#B6C2D4; --mute:#94A1B8;
+    --blue:#4F8EF7; --blue2:#3B82F6; --bluet:#16284A; --blued:#C7D9FB;
+    --ok:#34B98E; --okt:#0F2E25; --okd:#A7F0D2;
+    --ko:#F07A45; --kot:#3A1C10; --kod:#FFD2BC;
+    --am:#F0A64A; --amt:#3A2A0E; --amd:#FCD9A0; --tipbg:#2E2410; --tipink:#F8E3B5;
+    --dark:#18243A; --dark2:#22314B; --darkline:#3D4D69;
+    --track:#25324A; --chip:#1E2A40;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+body{min-height:100vh}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--blue)}
+h1,h2,h3{font-family:var(--head);margin:0;letter-spacing:-0.01em}
+p{margin:0}
+#app{max-width:1240px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(28px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+@media (min-width:700px){#app{padding-left:max(28px,env(safe-area-inset-left));padding-right:max(28px,env(safe-area-inset-right))}}
+.stack{display:flex;flex-direction:column;gap:16px}
+.row{display:flex;align-items:center;gap:12px}
+.wrap{flex-wrap:wrap}
+.grow{flex:1 1 auto;min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px}
+.muted{color:var(--ink2)}
+.small{font-size:13px}
+.hidden{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* botones */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 18px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-weight:600;font-size:16px;text-decoration:none;color:var(--ink)}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:700}
+.btn.big{min-height:58px;font-size:18px;border-radius:14px;width:100%}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.5;cursor:default}
+.back{min-height:44px;padding:0 14px;font-size:15px}
+.icon{width:18px;height:18px;flex-shrink:0}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:14px;font-weight:600;color:var(--ink)}
+button.chip{min-height:44px}
+.tag{display:inline-block;font-size:13px;font-weight:600;padding:6px 10px;border-radius:8px;background:var(--track);color:var(--ink2)}
+.tag.blue{background:var(--bluet);color:var(--blued)}
+.nov{display:inline-block;font-size:11px;font-weight:700;color:var(--amd);background:var(--amt);padding:2px 6px;border-radius:6px;letter-spacing:.02em;vertical-align:middle}
+
+/* cabecera inicio */
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{width:44px;height:44px;border-radius:12px;background:#0E1726;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand h1{font-size:26px;font-weight:700}
+.brand p{font-size:14px;color:var(--ink2);margin-top:2px}
+
+.home{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:960px){.home{grid-template-columns:460px minmax(0,1fr)}}
+
+.next{background:var(--dark);color:#fff;border:none;display:flex;flex-direction:column;gap:14px;padding:22px}
+.next .label{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--darkmute)}
+.seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;border-radius:12px;background:var(--dark2)}
+.seg button{min-height:42px;border-radius:9px;border:none;background:transparent;color:var(--darkink2);font-size:14px;font-weight:600}
+.seg button[aria-pressed="true"]{background:#fff;color:#0E1726;font-weight:700}
+.lens{display:flex;gap:6px;margin-left:auto}
+.lens button{width:52px;min-height:42px;border-radius:9px;border:1px solid var(--darkline);background:transparent;color:var(--darkink2);font-size:15px;font-weight:600}
+.lens button[aria-pressed="true"]{background:#fff;border-color:#fff;color:#0E1726;font-weight:700}
+.next .go{display:flex;align-items:center;justify-content:center;gap:10px;min-height:58px;border-radius:14px;border:none;background:var(--blue2);color:#fff;font-size:18px;font-weight:700}
+.next .foot{font-size:13px;line-height:1.45;color:var(--darkmute)}
+
+.scorebar{position:relative;height:12px;border-radius:6px;background:var(--track);margin:4px 0}
+.scorebar i{position:absolute;left:0;top:0;height:12px;border-radius:6px;background:var(--blue)}
+.scorebar b{position:absolute;top:-5px;width:2px;height:22px;background:var(--ink)}
+.scorebar b.t{background:var(--ok)}
+.big{font-family:var(--head);font-weight:700}
+
+.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.mode{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border-radius:14px;background:var(--card);border:1px solid var(--line);text-align:left;color:var(--ink);min-height:64px}
+.mode b{font-size:16px}
+.mode span{font-size:13px;color:var(--ink2)}
+
+.topics h2{font-size:20px}
+.trow{display:grid;grid-template-columns:minmax(0,1fr) 110px 44px;align-items:center;gap:12px;min-height:44px;padding:4px 6px;border:none;border-top:1px solid var(--line2);background:transparent;text-align:left;width:100%}
+.trow .n{font-size:14px;font-weight:600;line-height:1.3}
+.trow .n small{font-weight:400;color:var(--mute);font-size:13px}
+.trow .pct{font-size:14px;font-weight:600;text-align:right}
+@media (max-width:520px){.trow{grid-template-columns:minmax(0,1fr) 60px 40px}}
+.track{display:block;height:8px;border-radius:4px;background:var(--track);overflow:hidden}
+.track i{display:block;height:8px;border-radius:4px}
+.lv-hi{background:var(--ok)} .lv-mid{background:var(--blue)} .lv-lo{background:var(--ko)}
+
+.banner{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 16px;border-radius:14px;background:var(--amt);color:var(--amd);font-size:14px;line-height:1.45;margin-bottom:14px}
+.banner .grow{min-width:220px}
+.banner .btn{min-height:40px;font-size:14px}
+.banner.blue{background:var(--bluet);color:var(--blued)}
+.banner.red{background:var(--kot);color:var(--kod)}
+
+footer.foot{margin-top:24px;font-size:12px;color:var(--mute);text-align:center;line-height:1.6}
+
+/* pantalla de pregunta */
+.qtop{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.prog{flex:1 1 auto;display:flex;flex-direction:column;gap:6px;min-width:0}
+.prog .t{display:flex;justify-content:space-between;gap:10px;font-size:14px;color:var(--ink2);flex-wrap:wrap}
+.prog .t strong{color:var(--ink)}
+.pbar{height:8px;border-radius:4px;background:var(--track);overflow:hidden}
+.pbar i{display:block;height:8px;background:var(--blue);border-radius:4px}
+.qgrid{display:grid;gap:22px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.qgrid{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:28px}}
+.qtext{font-family:var(--head);font-size:24px;line-height:1.3;font-weight:600}
+@media (min-width:900px){.qtext{font-size:28px}}
+.tags{display:flex;gap:8px;flex-wrap:wrap}
+.opts{display:flex;flex-direction:column;gap:12px}
+.opt{display:flex;align-items:center;gap:14px;min-height:64px;padding:10px 16px;border-radius:14px;background:var(--card);border:2px solid var(--line);text-align:left;font-size:17px;line-height:1.35;color:var(--ink);width:100%}
+.opt .k{flex-shrink:0;width:32px;height:32px;border-radius:9px;background:var(--chip);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:var(--ink2)}
+.opt .lbl{margin-left:auto;font-size:13px;font-weight:700;padding-left:8px;white-space:nowrap}
+.opt.right{background:var(--okt);border-color:var(--ok);color:var(--okd);font-weight:600}
+.opt.right .k{background:var(--ok);color:#fff}
+.opt.right .lbl{color:var(--ok)}
+.opt.wrong{background:var(--kot);border-color:var(--ko);color:var(--kod);font-weight:600}
+.opt.wrong .k{background:var(--ko);color:#fff}
+.opt.wrong .lbl{color:var(--ko)}
+.opt.dim{color:var(--mute)}
+.opt.sel{background:var(--bluet);border-color:var(--blue);color:var(--blued);font-weight:600}
+.opt.sel .k{background:var(--blue);color:#fff}
+.tf{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.tf .opt{justify-content:center;min-height:72px;font-size:19px;font-weight:600}
+
+.conf{background:var(--dark);color:#fff;border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:14px}
+.conf .h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.conf .h b{font-size:18px}
+.conf .h span{font-size:13px;color:var(--darkmute)}
+.conf .two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.conf .two button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:64px;border-radius:12px;border:1px solid var(--darkline);background:transparent;color:#fff;padding:6px 10px}
+.conf .two button:first-child{background:var(--blue2);border-color:var(--blue2)}
+.conf .two button b{font-size:17px}
+.conf .two button span{font-size:13px;color:#DCE7FD;text-align:center}
+.conf .two button:last-child span{color:var(--darkmute)}
+.conf p{font-size:14px;line-height:1.5;color:var(--darkink2)}
+.conf p strong{color:#fff}
+.conf a{color:#93B4F8;font-weight:600}
+
+.expl{display:flex;flex-direction:column;gap:14px}
+.expl h4{margin:0 0 4px;font-size:15px;font-weight:700}
+.expl .no h4{color:var(--ko)} .expl .si h4{color:var(--ok)}
+.expl p{font-size:17px;line-height:1.5}
+.tip{display:flex;gap:12px;padding:14px 16px;border-radius:12px;background:var(--tipbg);color:var(--tipink);font-size:16px;line-height:1.5}
+.src{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--ink2);flex-wrap:wrap}
+.src a{font-weight:600}
+.cont{display:flex;align-items:center;gap:16px;padding-top:14px;border-top:1px solid var(--line2);flex-wrap:wrap}
+.cont p{flex:1 1 220px;font-size:14px;line-height:1.45;color:var(--ink2)}
+.okbox{background:var(--okt);border:1px solid var(--ok);color:var(--okd);border-radius:14px;padding:14px 16px;font-size:15px;line-height:1.5}
+
+/* ordenar / emparejar */
+.slots{display:flex;flex-direction:column;gap:8px}
+.slot{display:flex;align-items:center;gap:12px;min-height:52px;padding:6px 14px;border-radius:12px;border:2px dashed var(--line);font-size:16px;color:var(--mute);background:transparent;text-align:left;width:100%}
+.slot.full{border-style:solid;border-color:var(--blue);background:var(--bluet);color:var(--blued);font-weight:600}
+.slot.right{border-style:solid;border-color:var(--ok);background:var(--okt);color:var(--okd);font-weight:600}
+.slot.wrong{border-style:solid;border-color:var(--ko);background:var(--kot);color:var(--kod);font-weight:600}
+.slot .k{flex-shrink:0;width:28px;height:28px;border-radius:7px;background:var(--chip);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--ink2)}
+.pool{display:flex;flex-wrap:wrap;gap:10px}
+.pool button{min-height:48px;padding:8px 16px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:15px;font-weight:600;text-align:left;line-height:1.3}
+.mrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:stretch}
+.mrow .left{display:flex;align-items:center;padding:8px 14px;border-radius:12px;background:var(--chip);font-size:15px;font-weight:600;min-height:52px;line-height:1.3}
+.mrow .slot{min-height:52px;font-size:15px;line-height:1.3}
+
+/* fin de ronda */
+.endgrid{display:grid;gap:20px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.endgrid{grid-template-columns:540px minmax(0,1fr)}}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.stat{display:flex;flex-direction:column;gap:2px;padding:14px 16px;border-radius:12px;background:var(--bg)}
+.stat b{font-family:var(--head);font-size:24px}
+.stat span{font-size:14px;color:var(--ink2)}
+.stat.g{background:var(--okt)} .stat.g b,.stat.g span{color:var(--okd)}
+.stat.b{background:var(--bluet)} .stat.b b,.stat.b span{color:var(--blued)}
+.stat.r{background:var(--kot)} .stat.r b,.stat.r span{color:var(--kod)}
+.moved{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:8px 0;border-top:1px solid var(--line2);font-size:15px}
+.again{display:flex;align-items:center;justify-content:space-between;min-height:72px;padding:0 24px;border-radius:16px;background:var(--blue);color:#fff;border:none;width:100%;text-align:left}
+.again b{font-size:19px;display:block}
+.again span{font-size:14px;color:#DCE7FD}
+
+/* simulacro */
+.simgrid{display:grid;gap:24px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:960px){.simgrid{grid-template-columns:minmax(0,1fr) 440px}}
+.timer{display:flex;align-items:center;gap:8px;min-height:46px;padding:0 16px;border-radius:12px;background:var(--dark);color:#fff;font-family:var(--head);font-size:22px;font-weight:700}
+.timer.low{background:var(--ko)}
+.sheet{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px}
+.sheet button{position:relative;min-height:44px;border-radius:10px;border:2px solid var(--line);background:var(--card);font-size:15px;color:var(--ink2)}
+.sheet button.done{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
+.sheet button.cur{border:3px solid var(--blue);color:var(--blue);font-weight:700;background:var(--card)}
+.sheet button.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.sheet button.ko{background:var(--ko);border-color:var(--ko);color:#fff}
+.sheet button .f{position:absolute;top:-5px;right:-5px;width:14px;height:14px;border-radius:7px;background:#F59E0B;border:2px solid var(--card)}
+
+/* progreso */
+.levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (min-width:900px){.levels{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.lv{display:flex;flex-direction:column;gap:4px;padding:14px;border-radius:14px}
+.lv b{font-family:var(--head);font-size:30px}
+.lv .h{font-size:13px;font-weight:700}
+.lv span{font-size:13px}
+.lv0{background:var(--bg);border:1px dashed var(--line);color:var(--ink2)}
+.lv1{background:var(--kot);color:var(--kod)} .lv2{background:var(--amt);color:var(--amd)} .lv3{background:var(--bluet);color:var(--blued)} .lv4{background:var(--bluet);color:var(--blued);box-shadow:inset 0 0 0 2px var(--blue)} .lv5{background:var(--okt);color:var(--okd)}
+.rules{display:grid;gap:10px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.rules{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.rules div{padding:10px 12px;border-radius:10px;font-size:14px;line-height:1.4}
+.two-col{display:grid;gap:18px;grid-template-columns:minmax(0,1fr);align-items:start}
+@media (hover:none){.kbd{display:none}}
+@media (min-width:960px){.two-col{grid-template-columns:minmax(0,1fr) 420px}}
+.simrow{display:grid;grid-template-columns:80px 64px minmax(0,1fr) 92px;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line2);font-size:15px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl td,.tbl th{padding:8px 6px;border-top:1px solid var(--line2);text-align:left;vertical-align:middle}
+.tbl th{font-size:12px;color:var(--mute);font-weight:600;text-transform:uppercase;letter-spacing:.04em;border-top:none}
+textarea{width:100%;min-height:110px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:10px 12px;font-size:13px;font-family:ui-monospace,Menlo,monospace}
+
+/* chuleta */
+.cifras{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.cifras{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.cf{display:grid;grid-template-columns:110px minmax(0,1fr) 54px;align-items:center;gap:10px;min-height:42px;padding:4px 0;border-top:1px solid var(--line2);font-size:14px;line-height:1.35}
+.cf b{font-family:var(--head);font-size:18px}
+.cf .pg{color:var(--mute);text-align:right}
+
+.toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));transform:translateX(-50%);background:#0E1726;color:#fff;padding:12px 18px;border-radius:12px;font-size:15px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:50;max-width:min(92vw,520px);text-align:center}
+</style>
+</head>
+<body>
+<div id="app"><p style="padding:40px;text-align:center">Cargando…</p></div>
+<noscript><p style="padding:40px;text-align:center">Esta app necesita JavaScript.</p></noscript>
+
+<!-- Banco de preguntas. Si añades un fichero a data/, añádelo aquí (tools/validate.mjs lo comprueba). -->
+<script src="data/topics.js"></script>
+<script src="data/t01.js"></script>
+<script src="data/t02.js"></script>
+<script src="data/t03.js"></script>
+<script src="data/t04.js"></script>
+<script src="data/t05.js"></script>
+<script src="data/t06.js"></script>
+<script src="data/t07.js"></script>
+<script src="data/t08.js"></script>
+<script src="data/t09.js"></script>
+<script src="data/t10.js"></script>
+<script src="data/t11.js"></script>
+<script src="data/t12.js"></script>
+<script src="data/t13.js"></script>
+<script src="data/t14.js"></script>
+<script src="data/t15.js"></script>
+
+<script>
+(function () {
+"use strict";
+
+/* =====================================================================
+   Constantes
+   ===================================================================== */
+var APP_VERSION = "1.0.0";
+var SCHEMA = 1;                       // versión del formato guardado. Si cambia: añadir migración en MIGRATIONS.
+var NS = "dron-exam:";                // prefijo de TODAS las claves (el dominio jmelis.github.io es compartido)
+var KEY = NS + "state";
+var KEY_SNAPS = NS + "snapshots";
+var PDF_URL = "https://www.seguridadaerea.gob.es/sites/default/files/_Formacion.temario.completo.Ed12.pdf";
+var INTERVAL = [0, 1, 2, 4, 8, 16];   // rondas hasta que vuelve, por nivel
+var PROB = [0.45, 0.5, 0.65, 0.8, 0.9, 0.96]; // probabilidad estimada de acierto por nivel (0 = sin ver)
+var SIM_N = 40, SIM_MIN = 40, PASS = 30, READY = 34;
+var MODES = { mix: "Mezcla", nuevas: "Nuevas", repaso: "Repaso", fallos: "Fallos" };
+var MODE_LONG = { mix: "Mezcla", nuevas: "Solo nuevas", repaso: "Solo repaso", fallos: "Solo fallos", tema: "Tema", cifras: "Cifras", ids: "Repaso de fallos" };
+
+/* =====================================================================
+   Datos del banco
+   ===================================================================== */
+var QS = window.QB.all;
+var QMAP = {}; QS.forEach(function (q) { QMAP[q.id] = q; });
+var TMAP = {}; window.TOPICS.forEach(function (t) { TMAP[t.id] = t; });
+var BYT = {}; QS.forEach(function (q) { (BYT[q.t] = BYT[q.t] || []).push(q); });
+var MCQ = QS.filter(function (q) { return q.type === "mc"; });
+
+var CIFRAS = [
+  { name: "Alturas y distancias", facts: ["altura-120", "obstaculo-15", "a2-distancias", "a2-regla11", "a3-150", "pies", "altura-terreno"], rows: [
+    ["120 m", "Altura máxima en abierta (400 ft), sobre el punto más próximo del terreno", 19],
+    ["150 m", "Empieza la aviación general: 30 m de margen", 19],
+    ["50 · 105 · 15", "A menos de 50 m de un obstáculo de más de 105 m: hasta 15 m por encima", 19],
+    ["30 m → 5 m", "A2: distancia a no participantes; 5 m con baja velocidad (regla 1:1)", 29],
+    ["150 m", "A3: lejos de zonas residenciales, comerciales, industriales y recreativas", 32]] },
+  { name: "Clases, pesos y velocidades", facts: ["c0", "c1", "c2", "c3", "c4", "c0-vs-c1", "registro-cuando", "certificada"], rows: [
+    ["C0", "Menos de 250 g y menos de 19 m/s", 27],
+    ["C1", "Menos de 900 g o menos de 80 J; menos de 19 m/s", 28],
+    ["C2", "Menos de 4 kg; modo baja velocidad a menos de 3 m/s", 31],
+    ["C3 · C4", "Menos de 25 kg (C3: menos de 3 m; C4: sin vuelo automático)", 33],
+    ["250 g", "Por encima, o con cámara o micrófono: registro de operador", 47],
+    ["3 m", "Más de 3 m sobre concentraciones de personas: certificada", 43]] },
+  { name: "Lo que cambió en 2024", nov: true, facts: ["edad-operador", "edad-12", "edad-14", "sin-edad", "seguro-20kg", "seguro-exentos", "fiz-60", "aerodromo-45", "aerodromo-900", "ciaiac-72h"], rows: [
+    ["16 años", "Edad mínima del operador (antes 18) y del piloto en general", 44],
+    ["12 · 14", "Edades reducidas de piloto en abierta, según clase y subcategoría", 45],
+    ["20 kg", "Seguro obligatorio desde 20 kg; por debajo, exentos A1 y A3", 130],
+    ["60 m", "Espacio controlado o FIZ sin coordinar: VLOS y lejos de aeródromos", 108],
+    ["6 km · 5 km", "Coordinación con aeródromo público por debajo de 45 m de altura", 104],
+    ["72 h", "Plazo para notificar a la CIAIAC un accidente o incidente grave", 113]] },
+  { name: "Técnica, fechas y plazos", facts: ["frecuencias", "gnss-4", "baterias-almacen", "fl", "lesion-mortal", "luz-verde", "luces-verdes"], rows: [
+    ["2,4 · 5,8", "GHz: frecuencias típicas del enlace", 81],
+    ["4", "Satélites GNSS para la posición en 3D", 82],
+    ["30 %", "Carga para guardar las baterías", 128],
+    ["1013 hPa", "QNE, presión estándar de los niveles de vuelo", 93],
+    ["30 días", "Lesión mortal: muerte dentro de ese plazo", 131],
+    ["1/7/2022", "Luz verde intermitente obligatoria de noche", 120]] }
+];
+
+/* =====================================================================
+   Utilidades
+   ===================================================================== */
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function range(n) { var a = []; for (var i = 0; i < n; i++) a.push(i); return a; }
+function shuffledNotIdentity(n) { var a; var k = 0; do { a = shuffle(range(n)); k++; } while (n > 1 && k < 20 && a.every(function (v, i) { return v === i; })); return a; }
+function pagesOf(q) { return Array.isArray(q.p) ? q.p : [q.p]; }
+function pageLinks(q) { return pagesOf(q).map(function (p) { return '<a href="' + PDF_URL + "#page=" + p + '" target="_blank" rel="noopener">p. ' + p + "</a>"; }).join(", "); }
+function nowIso() { return new Date().toISOString(); }
+function todayStr() { var d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+function plural(n, one, many) { return n === 1 ? one : many; }
+function whenText(n) { return n === 1 ? "en la próxima ronda" : "dentro de " + n + " rondas"; }
+
+var ICON = {
+  back: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>',
+  arrow: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  check: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>',
+  x: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  bulb: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;margin-top:2px"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg>',
+  doc: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>',
+  clock: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>',
+  flag: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4h11l-2 4 2 4H5"/></svg>',
+  layers: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg>',
+  target: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>',
+  logo: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="5" r="2.5"/><circle cx="19" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M7 7l3 3M17 7l-3 3M7 17l3-3M17 17l-3-3"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/></svg>'
+};
+
+/* =====================================================================
+   Guardado. REGLA: nunca perder el progreso.
+   - Doble copia: localStorage + IndexedDB. Al cargar se usa la más reciente.
+   - Antes de migrar, importar o al encontrar datos corruptos se guarda una copia del texto original.
+   - Si los datos son de una versión de esquema MÁS NUEVA que esta app, se abre en solo lectura.
+   - Nunca se borran entradas de preguntas desconocidas (IDs retirados conservan su historial).
+   ===================================================================== */
+var MIGRATIONS = {
+  // Ejemplo para el futuro:  1: function (s) { /* transformar s */ s.schema = 2; return s; }
+};
+
+function emptyState() {
+  return { schema: SCHEMA, app: "dron-exam", createdAt: nowIso(), updatedAt: nowIso(), ronda: 0,
+           q: {}, sims: [], best: { survival: 0 }, settings: { mode: "mix", len: 12 }, lastBackupRonda: 0, ui: {} };
+}
+function validState(s) { return !!s && typeof s === "object" && typeof s.schema === "number" && s.q && typeof s.q === "object" && typeof s.ronda === "number"; }
+function stash(tag, raw) { try { localStorage.setItem(NS + "backup:" + tag + ":" + Date.now(), raw); } catch (e) { /* sin espacio: no bloquear */ } }
+function normalize(s) {
+  var d = emptyState();
+  for (var k in d) if (!(k in s)) s[k] = d[k];
+  if (!s.settings || typeof s.settings !== "object") s.settings = d.settings;
+  if (!s.best || typeof s.best !== "object") s.best = d.best;
+  if (!Array.isArray(s.sims)) s.sims = [];
+  if (!s.ui || typeof s.ui !== "object") s.ui = {};
+  return s;
+}
+
+var IDB = {
+  db: null,
+  open: function () {
+    var self = this;
+    return new Promise(function (resolve) {
+      try {
+        if (!window.indexedDB) return resolve(null);
+        var req = indexedDB.open("dron-exam", 1);
+        req.onupgradeneeded = function () { req.result.createObjectStore("kv"); };
+        req.onsuccess = function () { self.db = req.result; resolve(self.db); };
+        req.onerror = function () { resolve(null); };
+        req.onblocked = function () { resolve(null); };
+      } catch (e) { resolve(null); }
+    });
+  },
+  get: function (k) {
+    var db = this.db;
+    return new Promise(function (resolve) {
+      if (!db) return resolve(null);
+      try { var r = db.transaction("kv", "readonly").objectStore("kv").get(k); r.onsuccess = function () { resolve(r.result || null); }; r.onerror = function () { resolve(null); }; }
+      catch (e) { resolve(null); }
+    });
+  },
+  set: function (k, v) {
+    var db = this.db;
+    if (!db) return;
+    try { db.transaction("kv", "readwrite").objectStore("kv").put(v, k); } catch (e) { /* ignorar */ }
+  }
+};
+
+// Une dos progresos (p. ej., dos pestañas abiertas). Por pregunta gana la respuesta más reciente.
+function mergeStates(a, b) {
+  var r = JSON.parse(JSON.stringify(b));
+  Object.keys(a.q || {}).forEach(function (id) { var x = a.q[id], y = r.q[id]; if (!y || (x.at || 0) > (y.at || 0)) r.q[id] = x; });
+  r.ronda = Math.max(a.ronda || 0, b.ronda || 0);
+  var seenAt = {};
+  r.sims = (a.sims || []).concat(b.sims || []).filter(function (s) { var k = String(s.at); if (seenAt[k]) return false; seenAt[k] = 1; return true; })
+    .sort(function (x, y) { return String(x.at) < String(y.at) ? -1 : 1; });
+  r.best = { survival: Math.max((a.best || {}).survival || 0, (b.best || {}).survival || 0) };
+  r.lastBackupRonda = Math.max(a.lastBackupRonda || 0, b.lastBackupRonda || 0);
+  r.settings = a.settings || r.settings;
+  r.ui = Object.assign({}, b.ui || {}, a.ui || {});
+  r.schema = SCHEMA;
+  return r;
+}
+
+var Store = {
+  state: null, readOnly: false, persisted: null, saveFailed: false, lastSeen: null,
+  init: function () {
+    var self = this;
+    var ls = null, raw = null;
+    try { raw = localStorage.getItem(KEY); } catch (e) { raw = null; }
+    if (raw) {
+      try { ls = JSON.parse(raw); if (!validState(ls)) throw new Error("forma inválida"); }
+      catch (e) { stash("corrupt", raw); ls = null; }
+    }
+    return IDB.open().then(function () { return IDB.get("state"); }).then(function (iraw) {
+      var idb = null;
+      if (iraw) { try { idb = JSON.parse(iraw); if (!validState(idb)) idb = null; } catch (e) { idb = null; } }
+      var s = ls;
+      if (idb && (!s || String(idb.updatedAt) > String(s.updatedAt))) s = idb;
+      if (!s) s = emptyState();
+      if (s.schema > SCHEMA) {
+        self.readOnly = true;
+      } else if (s.schema < SCHEMA) {
+        stash("pre-migration-v" + s.schema, JSON.stringify(s));
+        while (s.schema < SCHEMA) {
+          if (!MIGRATIONS[s.schema]) { self.readOnly = true; break; }
+          s = MIGRATIONS[s.schema](s);
+        }
+      }
+      self.state = normalize(s);
+      self.lastSeen = self.state.updatedAt;
+      if (!self.readOnly) self.save();
+      try {
+        if (navigator.storage && navigator.storage.persist) {
+          navigator.storage.persisted().then(function (p) {
+            if (p) { self.persisted = true; return; }
+            return navigator.storage.persist().then(function (ok) { self.persisted = !!ok; });
+          }).catch(function () {});
+        }
+      } catch (e) {}
+    });
+  },
+  save: function () {
+    if (this.readOnly) return;
+    var s = this.state;
+    // Antes de escribir: si otra pestaña u otra versión guardó algo más nuevo, no se pisa.
+    try {
+      var curRaw = localStorage.getItem(KEY);
+      if (curRaw) {
+        var cur = JSON.parse(curRaw);
+        if (validState(cur) && this.lastSeen && String(cur.updatedAt) !== String(this.lastSeen)) {
+          if (cur.schema > SCHEMA) { this.readOnly = true; render(); return; }
+          if (String(cur.updatedAt) > String(this.lastSeen)) { s = this.state = mergeStates(s, normalize(cur)); }
+        }
+      }
+    } catch (e) { /* si no se puede leer, se guarda igualmente */ }
+    s.updatedAt = nowIso();
+    var raw = JSON.stringify(s);
+    try { localStorage.setItem(KEY, raw); this.saveFailed = false; }
+    catch (e) { if (!this.saveFailed) toast("No se pudo guardar en este navegador. Exporta una copia desde Progreso."); this.saveFailed = true; }
+    IDB.set("state", raw);
+    this.lastSeen = s.updatedAt;
+  },
+  snapshots: function () { try { return JSON.parse(localStorage.getItem(KEY_SNAPS) || "[]"); } catch (e) { return []; } },
+  snapshot: function () {
+    var list = this.snapshots();
+    list.push({ at: nowIso(), ronda: this.state.ronda, data: JSON.stringify(this.state) });
+    while (list.length > 3) list.shift();
+    var raw = JSON.stringify(list);
+    try { localStorage.setItem(KEY_SNAPS, raw); } catch (e) {}
+    IDB.set("snapshots", raw);
+  },
+  replace: function (s, why) {
+    stash(why, JSON.stringify(this.state));
+    this.state = normalize(s);
+    this.readOnly = false;
+    this.save();
+  }
+};
+
+function S() { return Store.state; }
+function RN() { return S().ronda; }
+function rec(id) { return S().q[id]; }
+function seen(id) { var r = rec(id); return !!(r && r.n > 0); }
+function lvl(id) { var r = rec(id); return r && r.n > 0 ? r.l : 0; }
+function due(id) { var r = rec(id); return !!(r && r.n > 0 && r.d <= RN()); }
+
+/* =====================================================================
+   Motor de repaso por rondas
+   ===================================================================== */
+function ensure(id) { var st = S(); if (!st.q[id]) st.q[id] = { l: 0, n: 0, ok: 0, ko: 0, d: 0 }; return st.q[id]; }
+function advanceSiblings(id) {
+  var f = QMAP[id] && QMAP[id].f; if (!f) return;
+  QS.forEach(function (q) {
+    if (q.id === id || q.f !== f) return;
+    var r = rec(q.id);
+    if (r && r.n > 0 && r.d > RN() + 1) r.d = RN() + 1;
+  });
+}
+// Respuesta en una ronda normal. result: "sure" | "doubt" | "wrong". first: primer intento en esta ronda.
+function answerActive(id, result, first) {
+  var st = S(), r = ensure(id), firstEver = r.n === 0;
+  r.n++; r.lr = st.ronda; r.at = Date.now();
+  if (result === "wrong") {
+    r.ko++;
+    if (first || r.l > 1) { r.l = 1; r.d = st.ronda + 1; advanceSiblings(id); }
+  } else {
+    r.ok++;
+    if (first) {
+      if (result === "sure") {
+        if (firstEver) { r.l = 3; r.lu = st.ronda; }
+        else if (r.lu !== st.ronda) { r.l = Math.min(5, r.l + 1); r.lu = st.ronda; }
+      } else if (firstEver || r.l < 1) r.l = 1;
+      r.d = st.ronda + INTERVAL[r.l];
+    }
+  }
+  Store.save();
+}
+// Respuesta en simulacro o supervivencia (sin pregunta de seguridad).
+function answerPassive(id, correct) {
+  var st = S(), r = ensure(id), firstEver = r.n === 0;
+  r.n++; r.lr = st.ronda; r.at = Date.now();
+  if (!correct) { r.ko++; r.l = 1; r.d = st.ronda + 1; advanceSiblings(id); }
+  else {
+    r.ok++;
+    if (firstEver) { r.l = 2; r.d = st.ronda + INTERVAL[2]; }
+    else if (r.d <= st.ronda) r.d = st.ronda + INTERVAL[Math.max(1, r.l)];
+  }
+  Store.save();
+}
+function preview(id, result) {
+  var r = rec(id), firstEver = !r || !r.n, old = firstEver ? 0 : r.l, l;
+  if (result === "sure") l = firstEver ? 3 : (r.lu === RN() ? r.l : Math.min(5, r.l + 1));
+  else l = firstEver ? 1 : Math.max(1, r.l);
+  var head = firstEver ? "Entra en nivel " + l : (l > old ? "Sube a nivel " + l : "Sigue en nivel " + l);
+  return head + " · vuelve " + whenText(INTERVAL[l]);
+}
+function topicMastery(t) {
+  var qs = BYT[t] || []; if (!qs.length) return 0;
+  var s = 0; qs.forEach(function (q) { s += lvl(q.id) / 5; });
+  return Math.round(100 * s / qs.length);
+}
+function masteryMap() { var m = {}; window.TOPICS.forEach(function (t) { m[t.id] = topicMastery(t.id); }); return m; }
+function predicted() {
+  var s = 0; MCQ.forEach(function (q) { s += PROB[seen(q.id) ? lvl(q.id) : 0]; });
+  return Math.round(100 * s / MCQ.length);
+}
+function counts() {
+  var c = { unseen: 0, l: [0, 0, 0, 0, 0, 0], due: 0, failed: 0 };
+  QS.forEach(function (q) {
+    var r = rec(q.id);
+    if (!r || !r.n) { c.unseen++; return; }
+    c.l[r.l]++;
+    if (r.d <= RN()) c.due++;
+    if (r.ko > 0) c.failed++;
+  });
+  return c;
+}
+function isReady() { var s = S().sims.slice(-3); return s.length === 3 && s.every(function (x) { return x.score >= READY; }); }
+
+function buildRound(o) {
+  var len = o.len || 12, R = RN();
+  if (o.ids) return shuffle(o.ids).slice(0, len);
+  var pool = QS;
+  if (o.topic) pool = pool.filter(function (q) { return q.t === o.topic; });
+  if (o.facts) pool = pool.filter(function (q) { return q.f && o.facts.indexOf(q.f) >= 0; });
+  var seenQ = pool.filter(function (q) { return seen(q.id); });
+  var unseen = shuffle(pool.filter(function (q) { return !seen(q.id); }));
+  var dueQ = shuffle(seenQ.filter(function (q) { return rec(q.id).d <= R; })).sort(function (a, b) { return (rec(a.id).d - rec(b.id).d) || (rec(a.id).l - rec(b.id).l); });
+  var rest = shuffle(seenQ.filter(function (q) { return rec(q.id).d > R; })).sort(function (a, b) { return (rec(a.id).l - rec(b.id).l) || ((rec(a.id).lr || 0) - (rec(b.id).lr || 0)); });
+  var picked = [];
+  function take(arr, n) { for (var i = 0; i < arr.length && picked.length < len && n > 0; i++) { if (picked.indexOf(arr[i]) < 0) { picked.push(arr[i]); n--; } } }
+  var mode = o.mode || "mix";
+  if (mode === "nuevas") { take(unseen, len); take(rest, len); take(dueQ, len); }
+  else if (mode === "repaso") { take(dueQ, len); take(rest, len); }
+  else if (mode === "fallos") {
+    var f = seenQ.filter(function (q) { return rec(q.id).ko > 0; }).sort(function (a, b) {
+      var ra = rec(a.id), rb = rec(b.id); return (rb.ko / rb.n - ra.ko / ra.n) || (ra.l - rb.l); });
+    take(f, len);
+  } else {
+    var lvl1 = 0; QS.forEach(function (q) { var r = rec(q.id); if (r && r.n && r.l === 1) lvl1++; });
+    var newTarget = Math.min(unseen.length, Math.round(len * (lvl1 > 15 ? 0.25 : 0.5)));
+    take(dueQ, len - newTarget); take(unseen, len); take(dueQ, len); take(rest, len);
+  }
+  return shuffle(picked.map(function (q) { return q.id; }));
+}
+function buildSim() {
+  var counts = {}, total = MCQ.length;
+  MCQ.forEach(function (q) { counts[q.t] = (counts[q.t] || 0) + 1; });
+  var ts = Object.keys(counts).map(Number), quota = {}, rem = [], sum = 0;
+  ts.forEach(function (t) { var e = SIM_N * counts[t] / total; quota[t] = Math.max(1, Math.floor(e)); sum += quota[t]; rem.push([t, e - Math.floor(e)]); });
+  rem.sort(function (a, b) { return b[1] - a[1]; });
+  for (var i = 0; sum < SIM_N; i = (i + 1) % rem.length) { var t = rem[i][0]; if (quota[t] < counts[t]) { quota[t]++; sum++; } }
+  while (sum > SIM_N) { var big = ts.sort(function (a, b) { return quota[b] - quota[a]; })[0]; quota[big]--; sum--; }
+  var ids = [];
+  ts.forEach(function (t) { ids = ids.concat(shuffle(MCQ.filter(function (q) { return q.t === t; })).slice(0, quota[t]).map(function (q) { return q.id; })); });
+  return shuffle(ids);
+}
+
+/* =====================================================================
+   Estado de la interfaz
+   ===================================================================== */
+var view = "home", ses = null, simTimer = null, simRes = null, toastTimer = null;
+var app = document.getElementById("app");
+
+function toast(msg) {
+  var el = document.querySelector(".toast");
+  if (!el) { el = document.createElement("div"); el.className = "toast"; el.setAttribute("role", "status"); document.body.appendChild(el); }
+  el.textContent = msg; el.classList.remove("hidden");
+  clearTimeout(toastTimer); toastTimer = setTimeout(function () { el.classList.add("hidden"); }, 3200);
+}
+function go(v) { view = v; render(); window.scrollTo(0, 0); }
+
+/* ---------- Rondas ---------- */
+function startRound(o) {
+  var ids = buildRound(o);
+  if (!ids.length) {
+    toast(o.mode === "fallos" ? "Todavía no has fallado ninguna pregunta." : "No hay preguntas para esa ronda.");
+    return;
+  }
+  ses = { kind: "round", o: o, queue: ids.map(function (id) { return { id: id, rep: false }; }), i: 0,
+          first: 0, good: 0, bad: 0, streak: 0, best: 0, ups: 0, news: 0, failed: [], reins: {},
+          before: masteryMap(), counted: false, t0: Date.now() };
+  prep(); go("q");
+}
+function startSurvival() {
+  ses = { kind: "surv", lives: 3, count: 0, good: 0, used: {}, queue: [], i: 0, first: 0, before: masteryMap(), counted: false };
+  ses.queue.push({ id: pickSurvival(), rep: false });
+  prep(); go("q");
+}
+function pickSurvival() {
+  var c = MCQ.filter(function (q) { return !ses.used[q.id]; });
+  if (!c.length) { ses.used = {}; c = MCQ.slice(); }
+  var w = c.map(function (q) { return (!seen(q.id) || due(q.id) || lvl(q.id) <= 2) ? 3 : 1; });
+  var tot = w.reduce(function (a, b) { return a + b; }, 0), x = Math.random() * tot;
+  for (var i = 0; i < c.length; i++) { x -= w[i]; if (x <= 0) { ses.used[c[i].id] = 1; return c[i].id; } }
+  ses.used[c[0].id] = 1; return c[0].id;
+}
+function cur() { return ses.queue[ses.i]; }
+function prep() {
+  var it = cur(), q = QMAP[it.id];
+  ses.phase = "ask"; ses.pick = null; ses.ok = null;
+  ses.wasSeen = seen(it.id); ses.lvlBefore = lvl(it.id);
+  if (q.type === "mc") ses.ord = shuffle([0, 1, 2, 3]);
+  if (q.type === "order") { ses.ord = shuffledNotIdentity(q.items.length); ses.placed = []; }
+  if (q.type === "match") { ses.ord = shuffledNotIdentity(q.pairs.length); ses.placed = q.pairs.map(function () { return null; }); }
+}
+function needsConfidence(q, it) { return ses.kind === "round" && !it.rep && (q.type === "mc" || q.type === "tf"); }
+function evaluate(correct) {
+  var it = cur(), q = QMAP[it.id];
+  ses.ok = correct;
+  if (ses.kind === "surv") {
+    ses.count++; ses.first++; if (correct) ses.good++; else ses.lives--;
+    answerPassive(it.id, correct);
+    ses.phase = correct ? "right" : "wrong";
+    render(); return;
+  }
+  if (!it.rep) {
+    ses.first++;
+    if (!ses.wasSeen) ses.news++;
+    if (correct) { ses.good++; ses.streak++; ses.best = Math.max(ses.best, ses.streak); }
+    else { ses.bad++; ses.streak = 0; ses.failed.push(it.id); }
+  }
+  if (!correct) {
+    answerActive(it.id, "wrong", !it.rep);
+    var n = ses.reins[it.id] || 0;
+    if (n < 2) { ses.reins[it.id] = n + 1; ses.queue.splice(Math.min(ses.queue.length, ses.i + 4), 0, { id: it.id, rep: true }); }
+    ses.phase = "wrong";
+  } else if (needsConfidence(q, it)) {
+    ses.phase = "conf";
+  } else {
+    answerActive(it.id, it.rep ? "doubt" : "sure", !it.rep);
+    if (lvl(it.id) > ses.lvlBefore && !it.rep) ses.ups++;
+    ses.phase = "right";
+  }
+  render();
+}
+function confidence(result) {
+  var it = cur();
+  answerActive(it.id, result, true);
+  if (lvl(it.id) > ses.lvlBefore) ses.ups++;
+  next();
+}
+function next() {
+  if (ses.kind === "surv") {
+    if (ses.lives <= 0) return finishSurvival();
+    ses.queue.push({ id: pickSurvival(), rep: false }); ses.i++; prep(); render(); window.scrollTo(0, 0); return;
+  }
+  ses.i++;
+  if (ses.i >= ses.queue.length) return finishRound();
+  prep(); render(); window.scrollTo(0, 0);
+}
+function countRound() {
+  if (ses && !ses.counted && ses.first >= 3) {
+    ses.counted = true; S().ronda++;
+    if (S().ronda % 5 === 0) Store.snapshot();
+    Store.save();
+  }
+}
+function finishRound() { countRound(); ses.after = masteryMap(); ses.secs = Math.round((Date.now() - ses.t0) / 1000); go("end"); }
+function finishSurvival() {
+  countRound();
+  ses.record = ses.good > (S().best.survival || 0);
+  if (ses.record) { S().best.survival = ses.good; Store.save(); }
+  go("survend");
+}
+function quit() {
+  if (ses && (ses.kind === "round" || ses.kind === "surv")) {
+    var counted = !ses.counted && ses.first >= 3;
+    countRound();
+    if (counted) toast("Guardado. La ronda cuenta.");
+    else if (ses.first > 0 && !ses.counted) toast("Guardado. Con menos de 3 respuestas no cuenta como ronda.");
+  }
+  ses = null; go("home");
+}
+
+/* ---------- Simulacro ---------- */
+function startSim() {
+  var ids = buildSim();
+  ses = { kind: "sim", ids: ids, ans: ids.map(function () { return null; }), ords: ids.map(function () { return shuffle([0, 1, 2, 3]); }),
+          flags: {}, i: 0, end: Date.now() + SIM_MIN * 60000 };
+  go("sim"); startTimer();
+}
+function startTimer() {
+  clearInterval(simTimer);
+  simTimer = setInterval(function () {
+    if (!ses || ses.kind !== "sim") { clearInterval(simTimer); return; }
+    var left = ses.end - Date.now();
+    var el = document.getElementById("timer");
+    if (left <= 0) { clearInterval(simTimer); submitSim(true); return; }
+    if (el) { el.lastChild.textContent = fmtTime(left); el.classList.toggle("low", left < 5 * 60000); }
+  }, 1000);
+}
+function fmtTime(ms) { var s = Math.max(0, Math.ceil(ms / 1000)); return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); }
+function submitSim(auto) {
+  clearInterval(simTimer);
+  var score = 0, byT = {}, wrong = [];
+  ses.ids.forEach(function (id, i) {
+    var q = QMAP[id], ok = ses.ans[i] === 0;
+    byT[q.t] = byT[q.t] || [0, 0]; byT[q.t][1]++;
+    if (ok) { score++; byT[q.t][0]++; } else wrong.push(i);
+    answerPassive(id, ok);
+  });
+  var st = S();
+  st.sims.push({ r: st.ronda, at: nowIso(), score: score, total: SIM_N, byT: byT, mins: Math.round((SIM_MIN * 60000 - Math.max(0, ses.end - Date.now())) / 60000) });
+  st.ronda++;
+  if (st.ronda % 5 === 0) Store.snapshot();
+  Store.save();
+  simRes = { ids: ses.ids, ans: ses.ans, ords: ses.ords, score: score, byT: byT, wrong: wrong, auto: !!auto };
+  ses = null; go("simres");
+}
+
+/* =====================================================================
+   Copias de seguridad
+   ===================================================================== */
+function exportPayload() { return { app: "dron-exam", kind: "progress-backup", exportedAt: nowIso(), appVersion: APP_VERSION, schema: SCHEMA, state: S() }; }
+function markBackup() { S().lastBackupRonda = S().ronda; S().ui.lastBackupAt = nowIso(); Store.save(); }
+function downloadBackup() {
+  var blob = new Blob([JSON.stringify(exportPayload())], { type: "application/json" });
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "dron-exam-progreso-" + todayStr() + ".json";
+  document.body.appendChild(a); a.click();
+  setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+  markBackup(); toast("Copia descargada. Guárdala en Archivos o en iCloud."); render();
+}
+function copyBackup() {
+  var txt = JSON.stringify(exportPayload());
+  var done = function () { markBackup(); toast("Copia copiada al portapapeles. Pégala en una nota."); render(); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, function () { showCode(txt); });
+  else showCode(txt);
+}
+function showCode(txt) { var t = document.getElementById("codebox"); if (t) { t.value = txt; t.select(); } toast("Selecciona el texto y cópialo."); }
+function importText(txt) {
+  var data;
+  try { data = JSON.parse(txt); } catch (e) { toast("Ese texto no es una copia válida."); return; }
+  var s = data && data.state ? data.state : data;
+  if (!validState(s)) { toast("Ese texto no es una copia válida."); return; }
+  if (s.schema > SCHEMA) { toast("La copia es de una versión más nueva de la app. Recarga la página y vuelve a intentarlo."); return; }
+  var answered = Object.keys(s.q).length;
+  if (!confirm("¿Restaurar esta copia (" + s.ronda + " rondas, " + answered + " preguntas vistas)? Tu progreso actual se guarda aparte por si acaso.")) return;
+  stash("before-import", JSON.stringify(S()));
+  while (s.schema < SCHEMA) { if (!MIGRATIONS[s.schema]) { toast("No sé convertir esa copia."); return; } s = MIGRATIONS[s.schema](s); }
+  Store.replace(s, "replaced-by-import");
+  toast("Progreso restaurado."); go("home");
+}
+function restoreSnapshot(i) {
+  var list = Store.snapshots(), sn = list[i]; if (!sn) return;
+  if (!confirm("¿Volver a la copia automática de la ronda " + sn.ronda + "? Tu progreso actual se guarda aparte.")) return;
+  try { var s = JSON.parse(sn.data); if (!validState(s)) throw 0; Store.replace(s, "replaced-by-snapshot"); toast("Copia automática restaurada."); go("home"); }
+  catch (e) { toast("Esa copia automática está dañada."); }
+}
+
+/* =====================================================================
+   Vistas
+   ===================================================================== */
+function render() {
+  var html = "";
+  if (view === "home") html = vHome();
+  else if (view === "q") html = vQuestion();
+  else if (view === "end") html = vEnd();
+  else if (view === "survend") html = vSurvEnd();
+  else if (view === "sim") html = vSim();
+  else if (view === "simres") html = vSimRes();
+  else if (view === "progress") html = vProgress();
+  else if (view === "cifras") html = vCifras();
+  app.innerHTML = html;
+}
+function backBtn(label, action) { return '<button class="btn back" data-a="' + (action || "home") + '">' + ICON.back + esc(label || "Inicio") + "</button>"; }
+function bar(p, cls) { return '<span class="track"><i class="' + cls + '" style="width:' + Math.max(0, Math.min(100, p)) + '%"></i></span>'; }
+function lvClass(p) { return p >= 75 ? "lv-hi" : p >= 50 ? "lv-mid" : "lv-lo"; }
+
+function banners() {
+  var st = S(), out = "";
+  if (Store.readOnly) out += '<div class="banner red"><span class="grow">Este progreso lo guardó una versión más nueva de la app. Recarga la página para actualizarla; mientras tanto no se guarda nada para no estropearlo.</span></div>';
+  if (Store.saveFailed) out += '<div class="banner red"><span class="grow">Este navegador no deja guardar. Exporta una copia para no perder nada.</span><button class="btn" data-a="progress">Ir a copias</button></div>';
+  var since = st.ronda - (st.lastBackupRonda || 0);
+  if (st.ronda >= 5 && since >= 10) out += '<div class="banner"><span class="grow">Llevas ' + since + " rondas sin guardar una copia de tu progreso fuera de la app.</span>" +
+    '<button class="btn" data-a="download">Guardar copia</button></div>';
+  var ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  var standalone = window.navigator.standalone || (window.matchMedia && matchMedia("(display-mode: standalone)").matches);
+  if (ios && !standalone && !st.ui.hideInstall) out += '<div class="banner blue"><span class="grow"><b>Consejo:</b> en Safari, Compartir → «Añadir a pantalla de inicio» la abre como una app. Ojo: la app de la pantalla de inicio y la pestaña de Safari guardan el progreso por separado. Elige una y quédate con ella; para pasar de una a otra, usa Exportar e Importar.</span><button class="btn" data-a="hideInstall">Entendido</button></div>';
+  return out;
+}
+
+function vHome() {
+  var st = S(), c = counts(), m = st.settings.mode || "mix", len = st.settings.len || 12, p = predicted(), dom = c.l[5];
+  var dueN = c.due, sumTxt;
+  if (m === "mix") sumTxt = dueN ? dueN + plural(dueN, " te toca", " te tocan") + (c.unseen ? " · el resto, nuevas" : "") : (c.unseen ? "Nada pendiente: todas nuevas" : "Todo repaso");
+  else if (m === "nuevas") sumTxt = c.unseen + " sin ver";
+  else if (m === "repaso") sumTxt = dueN + plural(dueN, " te toca", " te tocan") + " ahora";
+  else sumTxt = c.failed + plural(c.failed, " pregunta fallada", " preguntas falladas");
+  var seg = Object.keys(MODES).map(function (k) { return '<button data-a="mode" data-v="' + k + '" aria-pressed="' + (k === m) + '">' + MODES[k] + "</button>"; }).join("");
+  var lens = [6, 12, 20].map(function (n) { return '<button data-a="len" data-v="' + n + '" aria-pressed="' + (n === len) + '">' + n + "</button>"; }).join("");
+  var topics = window.TOPICS.map(function (t) {
+    var pm = topicMastery(t.id);
+    return '<button class="trow" data-a="topic" data-v="' + t.id + '"><span class="n">' + esc(t.name) + ' <small>· p. ' + esc(t.pages) + "</small>" + (t.nov ? ' <span class="nov">NOVEDAD</span>' : "") + "</span>" + bar(pm, lvClass(pm)) + '<span class="pct">' + pm + "%</span></button>";
+  }).join("");
+  var ready = isReady();
+  return '<header class="top"><div class="brand"><div class="logo">' + ICON.logo + '</div><div><h1>Piloto A1/A3</h1><p>Temario AESA de julio de 2024 · examen: 40 preguntas, 40 min, aprobado con 30</p></div></div>' +
+    '<div class="row wrap"><button class="chip" data-a="progress">' + ICON.layers + st.ronda + plural(st.ronda, " ronda hecha", " rondas hechas") + '</button><button class="chip" data-a="progress">' + ICON.target + "Dominas " + dom + " de " + QS.length + "</button></div></header>" +
+    banners() +
+    '<div class="home"><div class="stack">' +
+      '<section class="card next"><div class="row"><span class="label">Siguiente ronda</span><span class="grow"></span><span class="small" style="color:var(--darkmute)">' + esc(sumTxt) + "</span></div>" +
+        '<div class="seg" role="group" aria-label="Tipo de ronda">' + seg + "</div>" +
+        '<div class="row"><span class="small" style="color:var(--darkink2);font-size:14px">Preguntas por ronda</span><div class="lens" role="group" aria-label="Preguntas por ronda">' + lens + "</div></div>" +
+        '<button class="go" data-a="start">Empezar ronda · ~' + Math.max(2, Math.round(len * 0.4)) + " min " + ICON.arrow + "</button>" +
+        '<p class="foot">Haz las rondas que quieras, cuando quieras. Sin límite de nuevas. Si fallas una, vuelve en la misma ronda.</p></section>' +
+      '<section class="card stack" style="gap:10px"><div class="row"><span class="grow" style="font-weight:600">Nota estimada si te examinas hoy</span><span class="big" style="font-size:28px;color:var(--blue)">' + p + ' %</span></div>' +
+        '<div class="scorebar"><i style="width:' + p + '%"></i><b style="left:75%"></b><b class="t" style="left:85%"></b></div>' +
+        '<div class="row small muted"><span class="grow">Aprobado: 75 % (30/40)</span><span style="color:var(--ok);font-weight:600">' + (ready ? "Listo para el examen" : "Para ir tranquilo: 85 %") + "</span></div></section>" +
+      '<div class="modes">' +
+        '<button class="mode" data-a="sim"><b>Simulacro de examen</b><span>40 preguntas · 40 min</span></button>' +
+        '<button class="mode" data-a="survival"><b>Supervivencia</b><span>Hasta el 3.er fallo · récord: ' + (st.best.survival || 0) + "</span></button>" +
+        '<button class="mode" data-a="weak"><b>Mis puntos débiles</b><span>' + (c.failed ? "Las " + Math.min(c.failed, len) + " que más fallas" : "Aún no hay fallos") + "</span></button>" +
+        '<button class="mode" data-a="cifras"><b>Chuleta de cifras</b><span>Todos los números juntos</span></button>' +
+      "</div>" +
+      '<button class="btn" data-a="progress">Ver progreso y copias de seguridad</button>' +
+    "</div>" +
+    '<section class="card topics"><div class="row wrap" style="justify-content:space-between;padding-bottom:8px"><h2>Temas <span class="small muted" style="font-family:Inter,sans-serif;font-weight:400">· toca uno para una ronda solo de ese tema</span></h2><span class="nov" style="font-size:12px;padding:3px 7px">NOVEDAD = cambió desde la última vez</span></div>' + topics + "</section>" +
+    "</div>" +
+    '<footer class="foot">Versión ' + APP_VERSION + " · " + QS.length + " preguntas · Tu progreso se guarda solo en este dispositivo y navegador.<br>Páginas del temario oficial AESA FOR-UAS-P01-DT01 Ed.09 (julio 2024). No es una app oficial de AESA.</footer>";
+}
+
+function headerFor(q, it) {
+  var label, pos, extra = "";
+  if (ses.kind === "surv") {
+    label = "Supervivencia"; pos = "llevas " + ses.good + plural(ses.good, " acierto", " aciertos");
+    var hearts = ""; for (var i = 0; i < 3; i++) hearts += i < ses.lives ? "●" : "○";
+    extra = '<span aria-label="Vidas: ' + ses.lives + '" style="letter-spacing:2px;color:var(--ko);font-weight:700">' + hearts + "</span>";
+    return '<header class="qtop">' + backBtn("Salir", "quit") + '<div class="prog"><div class="t"><span><strong>' + label + "</strong> · " + pos + "</span>" + extra + "</div></div></header>";
+  }
+  var o = ses.o, name = o.mode === "tema" ? "Tema " + o.topic : (MODE_LONG[o.mode] || "Ronda");
+  var total = ses.queue.filter(function (x) { return !x.rep; }).length;
+  var n = ses.queue.slice(0, ses.i + 1).filter(function (x) { return !x.rep; }).length;
+  var posTxt = it.rep ? "repetición (llevas " + n + " de " + total + ")" : "pregunta " + n + " de " + total;
+  return '<header class="qtop">' + backBtn("Inicio", "quit") + '<div class="prog"><div class="t"><span><strong>Ronda · ' + esc(name) + "</strong> · " + posTxt + '</span><span><span style="color:var(--ok);font-weight:700">' + ses.good + " bien</span> · " +
+    '<span style="color:var(--ko);font-weight:700">' + ses.bad + plural(ses.bad, " fallo", " fallos") + '</span></span></div><div class="pbar"><i style="width:' + Math.round(100 * ses.i / total) + '%"></i></div></div></header>';
+}
+function tagsFor(q, it) {
+  var t = TMAP[q.t], st = "";
+  if (it.rep) st = "Repetición: la fallaste antes";
+  else if (!ses.wasSeen) st = "Nueva";
+  else st = "Repaso · nivel " + ses.lvlBefore + " de 5";
+  var fmt = { tf: "Verdadero o falso", order: "Ordena", match: "Empareja" }[q.type];
+  return '<div class="tags"><span class="tag blue">' + esc(t.name) + '</span><span class="tag">' + st + "</span>" + (fmt ? '<span class="tag">' + fmt + "</span>" : "") + (q.nov ? '<span class="nov" style="align-self:center">NOVEDAD</span>' : "") + "</div>";
+}
+function vQuestion() {
+  var it = cur(), q = QMAP[it.id];
+  var left = '<div class="stack" style="gap:16px">' + tagsFor(q, it) + '<h2 class="qtext">' + esc(q.q) + "</h2>";
+  if (ses.phase === "ask") {
+    var hint = { mc: 'Elige una opción.<span class="kbd"> Teclado: 1–4.</span>', tf: '<span class="kbd">Teclado: V o F.</span>', order: "Toca los pasos en orden. Toca uno colocado para quitarlo.", match: "Toca una opción para el primer hueco libre. Toca un hueco para vaciarlo." }[q.type];
+    left += '<p class="small muted">' + hint + "</p>";
+  }
+  left += "</div>";
+  var right = '<div class="stack">' + answerArea(q, it) + feedback(q, it) + "</div>";
+  return headerFor(q, it) + '<div class="qgrid">' + left + right + "</div>";
+}
+function answerArea(q, it) {
+  var ph = ses.phase, out = "";
+  if (q.type === "mc") {
+    out = '<div class="opts">' + ses.ord.map(function (oi, k) {
+      var cls = "opt", lbl = "", key = "ABCD"[k];
+      if (ph !== "ask") {
+        if (oi === 0) { cls += " right"; lbl = '<span class="lbl">Correcta</span>'; key = ICON.check; }
+        else if (oi === ses.pick) { cls += " wrong"; lbl = '<span class="lbl">Tu respuesta</span>'; key = ICON.x; }
+        else cls += " dim";
+      }
+      return '<button class="' + cls + '" data-a="pick" data-v="' + oi + '"' + (ph !== "ask" ? " disabled" : "") + '><span class="k">' + key + "</span><span>" + esc(q.o[oi]) + "</span>" + lbl + "</button>";
+    }).join("") + "</div>";
+  } else if (q.type === "tf") {
+    out = '<div class="tf">' + [true, false].map(function (v) {
+      var cls = "opt";
+      if (ph !== "ask") { if (v === q.a) cls += " right"; else if (v === ses.pick) cls += " wrong"; else cls += " dim"; }
+      return '<button class="' + cls + '" data-a="tf" data-v="' + v + '"' + (ph !== "ask" ? " disabled" : "") + ">" + (v ? "Verdadero" : "Falso") + "</button>";
+    }).join("") + "</div>";
+  } else if (q.type === "order") {
+    var n = q.items.length;
+    out = '<div class="slots">' + range(n).map(function (k) {
+      var idx = ses.placed[k], cls = "slot", txt = k === ses.placed.length && ph === "ask" ? "Toca el siguiente paso" : "";
+      if (idx != null) { txt = q.items[idx]; cls += ph === "ask" ? " full" : (idx === k ? " right" : " wrong"); }
+      return '<button class="' + cls + '" data-a="unplace" data-v="' + k + '"' + (ph !== "ask" || idx == null ? " disabled" : "") + '><span class="k">' + (k + 1) + "</span>" + esc(txt) + "</button>";
+    }).join("") + "</div>";
+    if (ph === "ask") {
+      var left = ses.ord.filter(function (i) { return ses.placed.indexOf(i) < 0; });
+      out += '<div class="pool">' + left.map(function (i) { return '<button data-a="place" data-v="' + i + '">' + esc(q.items[i]) + "</button>"; }).join("") + "</div>";
+      if (ses.placed.length === n) out += '<button class="btn primary big" data-a="checkOrder">Comprobar</button>';
+    }
+  } else if (q.type === "match") {
+    out = '<div class="slots">' + q.pairs.map(function (p, k) {
+      var idx = ses.placed[k], cls = "slot", txt = "¿?";
+      if (idx != null) { txt = q.pairs[idx][1]; cls += ph === "ask" ? " full" : (idx === k ? " right" : " wrong"); }
+      return '<div class="mrow"><div class="left">' + esc(p[0]) + '</div><button class="' + cls + '" data-a="unmatch" data-v="' + k + '"' + (ph !== "ask" || idx == null ? " disabled" : "") + ">" + esc(txt) + "</button></div>";
+    }).join("") + "</div>";
+    if (ph === "ask") {
+      var rest = ses.ord.filter(function (i) { return ses.placed.indexOf(i) < 0; });
+      out += '<div class="pool">' + rest.map(function (i) { return '<button data-a="match" data-v="' + i + '">' + esc(q.pairs[i][1]) + "</button>"; }).join("") + "</div>";
+      if (ses.placed.every(function (x) { return x != null; })) out += '<button class="btn primary big" data-a="checkMatch">Comprobar</button>';
+    }
+  }
+  return out;
+}
+function srcLine(q) { return '<div class="src">' + ICON.doc + "<span>Temario: <strong>" + pageLinks(q) + "</strong> (" + esc(TMAP[q.t].name) + ")</span></div>"; }
+function feedback(q, it) {
+  var ph = ses.phase;
+  if (ph === "ask") return "";
+  if (ph === "conf") {
+    return '<section class="conf"><div class="h"><b>¡Bien! ¿Lo sabías o has dudado?</b><span>Sé sincero: decide cuándo vuelve</span></div>' +
+      '<div class="two"><button data-a="sure"><b>Lo sabía</b><span>' + esc(preview(it.id, "sure")) + '</span></button><button data-a="doubt"><b>Dudé</b><span>' + esc(preview(it.id, "doubt")) + "</span></button></div>" +
+      "<p><strong>Por qué:</strong> " + esc(q.exp) + " · " + pageLinks(q) + "</p></section>";
+  }
+  if (ph === "right") {
+    var msg = ses.kind === "surv" ? "¡Bien!" : (it.rep ? "¡Ahora sí! Vuelve en la próxima ronda." : "¡Perfecto!");
+    return '<section class="okbox"><b>' + msg + "</b> " + esc(q.exp) + "</section>" + srcLine(q) +
+      '<div class="cont"><p></p><button class="btn primary" data-a="next">Continuar ' + ICON.arrow + "</button></div>";
+  }
+  // wrong
+  var parts = "";
+  if (q.type === "mc") {
+    parts += '<div class="no"><h4>Por qué «' + esc(short(q.o[ses.pick])) + '» no</h4><p>' + esc(q.w[ses.pick]) + "</p></div>";
+    parts += '<div class="si"><h4>Por qué «' + esc(short(q.o[0])) + '» sí</h4><p>' + esc(q.exp) + "</p></div>";
+  } else if (q.type === "tf") {
+    parts += '<div class="si"><h4>Es ' + (q.a ? "verdadero" : "falso") + "</h4><p>" + esc(q.exp) + "</p></div>";
+  } else if (q.type === "order") {
+    parts += '<div class="si"><h4>Orden correcto</h4><p>' + q.items.map(function (x, i) { return (i + 1) + ". " + esc(x); }).join("<br>") + "</p></div><div><p>" + esc(q.exp) + "</p></div>";
+  } else if (q.type === "match") {
+    parts += '<div class="si"><h4>Parejas correctas</h4><p>' + q.pairs.map(function (p) { return esc(p[0]) + " → <b>" + esc(p[1]) + "</b>"; }).join("<br>") + "</p></div><div><p>" + esc(q.exp) + "</p></div>";
+  }
+  if (q.tip) parts += '<div class="tip">' + ICON.bulb + "<span><b>Truco:</b> " + esc(q.tip) + "</span></div>";
+  var note;
+  if (ses.kind === "surv") note = ses.lives > 0 ? "Te " + plural(ses.lives, "queda 1 vida.", "quedan " + ses.lives + " vidas.") : "Se acabaron las vidas.";
+  else note = (ses.reins[it.id] || 0) <= 2 && ses.queue.slice(ses.i + 1).some(function (x) { return x.id === it.id; }) ? "Vuelve a salir dentro de 3 preguntas y otra vez en la próxima ronda." : "Vuelve en la próxima ronda.";
+  return '<section class="card expl">' + parts + srcLine(q) + '<div class="cont"><p>' + note + '</p><button class="btn primary" data-a="next">' + (ses.kind === "surv" && ses.lives <= 0 ? "Ver resultado" : "Continuar") + " " + ICON.arrow + "</button></div></section>";
+}
+function short(s) { return s.length > 48 ? s.slice(0, 46).trim() + "…" : s; }
+
+function vEnd() {
+  var moved = window.TOPICS.map(function (t) { return { t: t, a: ses.before[t.id], b: ses.after[t.id] }; }).filter(function (x) { return x.a !== x.b; })
+    .sort(function (x, y) { return Math.abs(y.b - y.a) - Math.abs(x.b - x.a); }).slice(0, 4);
+  var mins = Math.floor(ses.secs / 60), secs = ses.secs % 60;
+  var failed = ses.failed.filter(function (v, i, a) { return a.indexOf(v) === i; });
+  var c = counts();
+  return '<header class="top"><div><h1 style="font-size:30px">Ronda terminada</h1><p class="muted" style="margin-top:4px">' + esc(MODE_LONG[ses.o.mode] || "Ronda") + " · " + ses.first + " preguntas · " + mins + " min " + secs + " s" + (ses.counted ? " · ronda número " + RN() : " · no cuenta (menos de 3)") + "</p></div>" + backBtn("Inicio", "home") + "</header>" +
+    '<div class="endgrid"><section class="card stack"><div class="row" style="align-items:baseline;gap:12px"><span class="big" style="font-size:68px;line-height:1">' + ses.good + '</span><span class="big muted" style="font-size:26px">de ' + ses.first + " bien</span></div>" +
+    '<div class="stats"><div class="stat"><b>' + ses.best + plural(ses.best, " seguida", " seguidas") + '</b><span>Tu mejor racha de la ronda</span></div><div class="stat g"><b>' + ses.ups + plural(ses.ups, " sube", " suben") + "</b><span>de nivel</span></div>" +
+    '<div class="stat b"><b>' + ses.news + plural(ses.news, " nueva", " nuevas") + '</b><span>vistas por primera vez</span></div><div class="stat r"><b>' + failed.length + plural(failed.length, " fallada", " falladas") + "</b><span>vuelven en la próxima ronda</span></div></div>" +
+    (moved.length ? '<div><p style="font-weight:700;margin-bottom:4px">Lo que has movido</p>' + moved.map(function (x) { return '<div class="moved"><span>' + esc(x.t.name) + '</span><b style="color:' + (x.b >= x.a ? "var(--ok)" : "var(--ko)") + '">' + x.a + " % → " + x.b + " %</b></div>"; }).join("") + "</div>" : "") +
+    "</section>" +
+    '<section class="stack"><h2>¿Otra?</h2><button class="again" data-a="again"><span><b>Otra ronda igual</b><span>' + esc(MODE_LONG[ses.o.mode] || "") + " · " + (ses.o.len || 12) + " preguntas · " + c.due + plural(c.due, " te toca", " te tocan") + "</span></span>" + ICON.arrow + "</button>" +
+    '<div class="modes">' + (failed.length ? '<button class="mode" data-a="fixFailed"><b>Remata ' + plural(failed.length, "la fallada", "las " + failed.length + " falladas") + "</b><span>" + (failed.length <= 3 ? "Menos de un minuto" : "Unos " + Math.max(1, Math.round(failed.length * 0.4)) + " min") + "</span></button>" : "") +
+    '<button class="mode" data-a="onlyNew"><b>Solo nuevas</b><span>Te quedan ' + c.unseen + " sin ver</span></button>" +
+    '<button class="mode" data-a="survival"><b>Supervivencia</b><span>Hasta el 3.er fallo · récord: ' + (S().best.survival || 0) + "</span></button>" +
+    '<button class="mode" data-a="sim"><b>Simulacro</b><span>40 preguntas · 40 min</span></button></div>' +
+    '<div class="card row wrap"><p class="grow muted" style="min-width:200px">Si paras aquí no pierdes nada: lo pendiente te espera en la próxima ronda, sea mañana o dentro de un mes.</p><button class="btn" data-a="home">Parar por hoy</button></div></section></div>';
+}
+function vSurvEnd() {
+  return '<header class="top"><h1 style="font-size:30px">Supervivencia</h1>' + backBtn("Inicio", "home") + "</header>" +
+    '<section class="card stack" style="max-width:640px"><div class="row" style="align-items:baseline;gap:12px"><span class="big" style="font-size:68px;line-height:1">' + ses.good + '</span><span class="big muted" style="font-size:26px">' + plural(ses.good, "acierto", "aciertos") + " antes del tercer fallo</span></div>" +
+    '<p class="muted">' + (ses.record ? "¡Nuevo récord!" : "Récord: " + (S().best.survival || 0)) + " · Los fallos vuelven en la próxima ronda.</p>" +
+    '<div class="row wrap"><button class="btn primary" data-a="survival">Otra vez</button><button class="btn" data-a="home">Inicio</button></div></section>';
+}
+
+function vSim() {
+  var i = ses.i, q = QMAP[ses.ids[i]], left = ses.end - Date.now(), answered = ses.ans.filter(function (x) { return x != null; }).length;
+  var opts = ses.ords[i].map(function (oi, k) {
+    var sel = ses.ans[i] === oi;
+    return '<button class="opt' + (sel ? " sel" : "") + '" data-a="simPick" data-v="' + oi + '"><span class="k">' + "ABCD"[k] + "</span><span>" + esc(q.o[oi]) + "</span></button>";
+  }).join("");
+  var sheet = ses.ids.map(function (id, k) {
+    var cls = k === i ? "cur" : (ses.ans[k] != null ? "done" : "");
+    return '<button class="' + cls + '" data-a="simGo" data-v="' + k + '" aria-label="Pregunta ' + (k + 1) + '">' + (k + 1) + (ses.flags[k] ? '<span class="f"></span>' : "") + "</button>";
+  }).join("");
+  return '<header class="qtop">' + backBtn("Salir", "simQuit") + '<div class="grow"><h1 style="font-size:22px">Simulacro de examen</h1><p class="small muted">Como el real: 40 preguntas, 40 minutos, aprobado con 30. Sin explicaciones hasta que entregues.</p></div>' +
+    '<div class="timer' + (left < 5 * 60000 ? " low" : "") + '" id="timer">' + ICON.clock + "<span>" + fmtTime(left) + "</span></div>" +
+    '<button class="btn" style="border:2px solid var(--blue);color:var(--blue)" data-a="simSubmit">Entregar</button></header>' +
+    '<div class="simgrid"><div class="stack"><p class="muted" style="font-weight:600">Pregunta ' + (i + 1) + " de " + SIM_N + "</p>" +
+    '<h2 class="qtext" style="font-size:24px">' + esc(q.q) + "</h2>" + '<div class="opts">' + opts + "</div>" +
+    '<div class="row wrap"><button class="btn" data-a="simFlag">' + ICON.flag + (ses.flags[i] ? "Quitar marca" : "Marcar para revisar") + '</button><span class="grow"></span>' +
+    '<button class="btn" data-a="simPrev"' + (i === 0 ? " disabled" : "") + '>Anterior</button><button class="btn primary" data-a="simNext"' + (i === SIM_N - 1 ? " disabled" : "") + ">Siguiente</button></div></div>" +
+    '<section class="card stack"><div class="row"><h3 class="grow" style="font-size:17px">Hoja de respuestas</h3><span class="small muted">' + answered + " respondidas · " + (SIM_N - answered) + " pendientes</span></div>" +
+    '<div class="sheet">' + sheet + '</div><p class="small muted">Azul: respondida · Punto naranja: marcada para revisar. Al entregar verás la nota, los aciertos por tema y cada fallo explicado.</p></section></div>';
+}
+function vSimRes() {
+  var r = simRes, ok = r.score >= PASS;
+  var topics = Object.keys(r.byT).map(Number).sort(function (a, b) { return a - b; }).map(function (t) {
+    var v = r.byT[t], p = Math.round(100 * v[0] / v[1]);
+    return "<tr><td>" + esc(TMAP[t].name) + "</td><td>" + v[0] + "/" + v[1] + '</td><td style="width:30%">' + bar(p, lvClass(p)) + "</td></tr>";
+  }).join("");
+  var wrong = r.wrong.map(function (i) {
+    var q = QMAP[r.ids[i]], a = r.ans[i];
+    return '<div class="card stack" style="gap:8px"><p style="font-weight:600">' + (i + 1) + ". " + esc(q.q) + "</p>" +
+      (a == null ? '<p style="color:var(--ko)">Sin responder</p>' : '<p style="color:var(--ko)"><b>Tu respuesta:</b> ' + esc(q.o[a]) + " — " + esc(q.w[a]) + "</p>") +
+      '<p style="color:var(--ok)"><b>Correcta:</b> ' + esc(q.o[0]) + "</p><p class=\"muted\">" + esc(q.exp) + " · " + pageLinks(q) + "</p></div>";
+  }).join("");
+  var sheet = r.ids.map(function (id, k) { return '<button class="' + (r.ans[k] === 0 ? "ok" : "ko") + '" disabled>' + (k + 1) + "</button>"; }).join("");
+  return '<header class="top"><div><h1 style="font-size:30px">Resultado del simulacro</h1><p class="muted" style="margin-top:4px">' + (r.auto ? "Se acabó el tiempo. " : "") + "Los fallos ya están en tu repaso.</p></div>" + backBtn("Inicio", "home") + "</header>" +
+    '<div class="two-col"><section class="card stack"><div class="row" style="align-items:baseline;gap:12px"><span class="big" style="font-size:68px;line-height:1">' + r.score + '</span><span class="big muted" style="font-size:26px">de 40</span><span class="grow"></span>' +
+    '<span class="big" style="font-size:26px;color:' + (ok ? "var(--ok)" : "var(--ko)") + '">' + (ok ? "APTO" : "NO APTO") + "</span></div>" +
+    '<p class="muted">' + Math.round(r.score * 2.5) + " % · hacen falta 30 (75 %). " + (isReady() ? "Llevas 3 simulacros seguidos con 34 o más: estás listo." : "Para ir tranquilo, busca 34 o más en 3 seguidos.") + "</p>" +
+    '<table class="tbl"><tr><th>Tema</th><th>Aciertos</th><th></th></tr>' + topics + "</table></section>" +
+    '<section class="stack"><div class="card stack"><h3 style="font-size:17px">Hoja corregida</h3><div class="sheet">' + sheet + "</div></div>" +
+    (r.wrong.length ? '<button class="again" data-a="simFix"><span><b>Repasar estos ' + r.wrong.length + ' fallos ahora</b><span>Ronda solo con ellos</span></span>' + ICON.arrow + "</button>" : "") +
+    '<button class="btn" data-a="sim">Otro simulacro</button></section></div>' +
+    (wrong ? '<h2 style="margin:26px 0 12px">Tus fallos, explicados</h2><div class="stack">' + wrong + "</div>" : "");
+}
+
+function vProgress() {
+  var st = S(), c = counts(), snaps = Store.snapshots();
+  var lv = '<div class="levels">' +
+    '<div class="lv lv0"><span class="h">SIN VER</span><b>' + c.unseen + "</b><span>Entran cuando hay hueco, sin tope</span></div>" +
+    [1, 2, 3, 4].map(function (l) { return '<div class="lv lv' + l + '"><span class="h">NIVEL ' + l + "</span><b>" + c.l[l] + "</b><span>Vuelve " + whenText(INTERVAL[l]) + "</span></div>"; }).join("") +
+    '<div class="lv lv5"><span class="h">DOMINADAS</span><b>' + c.l[5] + "</b><span>Una vez cada 16 rondas</span></div></div>";
+  var sims = st.sims.slice(-8).reverse().map(function (s) {
+    var p = Math.round(100 * s.score / s.total), cls = s.score >= READY ? "lv-hi" : s.score >= PASS ? "lv-mid" : "lv-lo";
+    return '<div class="simrow"><span class="muted">Ronda ' + (s.r + 1) + "</span><strong>" + s.score + "/" + s.total + "</strong>" + bar(p, cls) + '<span style="font-weight:700;text-align:right;color:' + (s.score >= PASS ? "var(--ok)" : "var(--ko)") + '">' + (s.score >= READY ? "Apto" : s.score >= PASS ? "Apto justo" : "No apto") + "</span></div>";
+  }).join("") || '<p class="muted">Todavía no has hecho ningún simulacro.</p>';
+  var best = st.sims.reduce(function (m, s) { return Math.max(m, s.score); }, 0);
+  var topics = window.TOPICS.map(function (t) {
+    var qs = BYT[t.id] || [], seenN = qs.filter(function (q) { return seen(q.id); }).length, pm = topicMastery(t.id);
+    return "<tr><td>" + esc(t.name) + (t.nov ? ' <span class="nov">NOVEDAD</span>' : "") + '</td><td class="muted">p. ' + esc(t.pages) + "</td><td>" + seenN + "/" + qs.length + '</td><td style="width:26%">' + bar(pm, lvClass(pm)) + "</td><td><b>" + pm + "%</b></td></tr>";
+  }).join("");
+  var snapHtml = snaps.length ? snaps.map(function (s, i) { return '<div class="row" style="border-top:1px solid var(--line2);padding-top:8px"><span class="grow small">Ronda ' + s.ronda + " · " + new Date(s.at).toLocaleString("es-ES") + '</span><button class="btn" style="min-height:40px;font-size:14px" data-a="snap" data-v="' + i + '">Restaurar</button></div>'; }).reverse().join("") : '<p class="small muted">Se crea una cada 5 rondas (se guardan las 3 últimas).</p>';
+  var lastB = st.ui.lastBackupAt ? "Última copia: ronda " + st.lastBackupRonda + " (" + new Date(st.ui.lastBackupAt).toLocaleDateString("es-ES") + ")" : "Todavía no has guardado ninguna copia.";
+  return '<header class="qtop">' + backBtn() + '<h1 class="grow" style="font-size:24px">Tu progreso</h1><span class="small muted">' + QS.length + " preguntas · " + window.TOPICS.length + " temas · " + st.ronda + plural(st.ronda, " ronda", " rondas") + "</span></header>" +
+    '<div class="stack"><section class="card stack"><div class="row wrap"><h2 class="grow" style="font-size:18px">Niveles de repaso</h2><span class="small muted">El nivel decide dentro de cuántas rondas vuelve cada pregunta. No hay fechas.</span></div>' + lv +
+    '<div class="rules"><div style="background:var(--okt);color:var(--okd)"><b>Aciertas y lo sabías</b> → sube un nivel (como mucho uno por ronda). La primera vez, directa a nivel 3.</div><div style="background:var(--amt);color:var(--amd)"><b>Aciertas pero dudaste</b> → se queda en su nivel</div><div style="background:var(--kot);color:var(--kod)"><b>Fallas</b> → vuelve en esta misma ronda y baja a nivel 1</div></div></section>' +
+    '<div class="two-col"><section class="card stack" style="gap:6px"><div class="row"><h2 class="grow" style="font-size:18px">Simulacros</h2><span class="small muted">Récord: ' + best + "/40 · nota estimada hoy: " + predicted() + " %</span></div>" + sims +
+    '<div class="card" style="background:var(--bg);margin-top:10px"><b>¿Cuándo estás listo?</b><p class="muted" style="margin-top:4px">' + (isReady() ? "Ya: llevas 3 simulacros seguidos con 34/40 o más." : "Cuando saques 34/40 o más en 3 simulacros seguidos, te lo marco aquí. Sin prisas ni fechas.") + "</p></div></section>" +
+    '<section class="card stack"><h2 style="font-size:18px">Copia de seguridad</h2><p class="muted">Tu progreso se guarda en este dispositivo (doble copia interna). Para estar a salvo si Safari borra los datos, guarda una copia fuera de vez en cuando.</p>' +
+    '<button class="btn primary" data-a="download">Guardar copia (archivo)</button><button class="btn" data-a="copy">Copiar como texto</button>' +
+    '<label class="btn" style="position:relative">Restaurar desde archivo<input type="file" accept=".json,application/json" data-a="file" style="position:absolute;inset:0;opacity:0;cursor:pointer"></label>' +
+    '<textarea id="codebox" placeholder="…o pega aquí el texto de una copia y pulsa «Restaurar texto»"></textarea><button class="btn" data-a="paste">Restaurar texto</button>' +
+    '<p class="small muted">' + esc(lastB) + "</p><h3 style=\"font-size:15px;margin-top:6px\">Copias automáticas</h3>" + snapHtml +
+    '<p class="small muted">Almacenamiento persistente: ' + (Store.persisted === true ? "sí" : Store.persisted === false ? "no concedido" : "desconocido") + " · Versión " + APP_VERSION + " · formato " + SCHEMA + "</p></section></div>" +
+    '<section class="card"><h2 style="font-size:18px;margin-bottom:6px">Por temas</h2><table class="tbl"><tr><th>Tema</th><th>Páginas</th><th>Vistas</th><th>Dominio</th><th></th></tr>' + topics + "</table></section></div>";
+}
+function vCifras() {
+  var cards = CIFRAS.map(function (c, i) {
+    var n = QS.filter(function (q) { return q.f && c.facts.indexOf(q.f) >= 0; }).length;
+    return '<section class="card" style="' + (c.nov ? "border:2px solid var(--amt)" : "") + '"><div class="row" style="margin-bottom:6px"><h2 class="grow" style="font-size:16px;font-family:Inter,sans-serif;font-weight:700">' + esc(c.name) + (c.nov ? ' <span class="nov">NOVEDAD</span>' : "") + '</h2><button class="btn" style="min-height:40px;font-size:14px" data-a="facts" data-v="' + i + '">Practicar (' + n + ")</button></div>" +
+      c.rows.map(function (r) { return '<div class="cf"><b>' + esc(r[0]) + "</b><span>" + esc(r[1]) + '</span><a class="pg" href="' + PDF_URL + "#page=" + r[2] + '" target="_blank" rel="noopener">p. ' + r[2] + "</a></div>"; }).join("") + "</section>";
+  }).join("");
+  return '<header class="qtop">' + backBtn() + '<div class="grow"><h1 style="font-size:24px">Chuleta de cifras</h1><p class="small muted">Los números son lo que más se confunde. «Practicar» hace una ronda solo con esas cifras.</p></div></header><div class="cifras">' + cards + "</div>";
+}
+
+/* =====================================================================
+   Acciones
+   ===================================================================== */
+var A = {
+  home: function () { if (ses && ses.kind !== "sim") quit(); else { ses = null; go("home"); } },
+  quit: quit,
+  progress: function () { go("progress"); },
+  cifras: function () { go("cifras"); },
+  mode: function (v) { S().settings.mode = v; Store.save(); render(); },
+  len: function (v) { S().settings.len = Number(v); Store.save(); render(); },
+  start: function () { startRound({ mode: S().settings.mode, len: S().settings.len }); },
+  topic: function (v) { startRound({ mode: "tema", topic: Number(v), len: S().settings.len }); },
+  weak: function () { startRound({ mode: "fallos", len: S().settings.len }); },
+  facts: function (v) { var c = CIFRAS[Number(v)]; startRound({ mode: "cifras", facts: c.facts, len: 12 }); },
+  survival: startSurvival,
+  sim: function () { if (confirm("¿Empezar un simulacro de 40 preguntas y 40 minutos? Si sales antes de entregar, no se guarda.")) startSim(); },
+  pick: function (v) { if (ses.phase !== "ask") return; ses.pick = Number(v); evaluate(ses.pick === 0); },
+  tf: function (v) { if (ses.phase !== "ask") return; ses.pick = v === "true"; evaluate(ses.pick === QMAP[cur().id].a); },
+  place: function (v) { ses.placed.push(Number(v)); render(); },
+  unplace: function (v) { ses.placed.splice(Number(v), 1); render(); },
+  checkOrder: function () { evaluate(ses.placed.every(function (x, i) { return x === i; })); },
+  match: function (v) { var k = ses.placed.indexOf(null); if (k >= 0) { ses.placed[k] = Number(v); render(); } },
+  unmatch: function (v) { ses.placed[Number(v)] = null; render(); },
+  checkMatch: function () { evaluate(ses.placed.every(function (x, i) { return x === i; })); },
+  sure: function () { confidence("sure"); },
+  doubt: function () { confidence("doubt"); },
+  next: next,
+  again: function () { startRound(ses.o); },
+  fixFailed: function () { var f = ses.failed.filter(function (v, i, a) { return a.indexOf(v) === i; }); startRound({ mode: "ids", ids: f, len: f.length }); },
+  onlyNew: function () { startRound({ mode: "nuevas", len: S().settings.len }); },
+  simPick: function (v) { ses.ans[ses.i] = Number(v); render(); },
+  simGo: function (v) { ses.i = Number(v); render(); },
+  simPrev: function () { if (ses.i > 0) { ses.i--; render(); } },
+  simNext: function () { if (ses.i < SIM_N - 1) { ses.i++; render(); } },
+  simFlag: function () { ses.flags[ses.i] = !ses.flags[ses.i]; render(); },
+  simSubmit: function () {
+    var left = ses.ans.filter(function (x) { return x == null; }).length;
+    if (confirm(left ? "Te quedan " + left + " sin responder. ¿Entregar igualmente?" : "¿Entregar el simulacro?")) submitSim(false);
+  },
+  simQuit: function () { if (confirm("¿Salir del simulacro? No se guardará.")) { clearInterval(simTimer); ses = null; go("home"); } },
+  simFix: function () { var ids = simRes.wrong.map(function (i) { return simRes.ids[i]; }); startRound({ mode: "ids", ids: ids, len: ids.length }); },
+  download: downloadBackup,
+  copy: copyBackup,
+  paste: function () { var t = document.getElementById("codebox"); if (t && t.value.trim()) importText(t.value.trim()); else toast("Pega primero el texto de una copia."); },
+  snap: function (v) { restoreSnapshot(Number(v)); },
+  hideInstall: function () { S().ui.hideInstall = true; Store.save(); render(); }
+};
+
+document.addEventListener("click", function (e) {
+  var el = e.target.closest("[data-a]");
+  if (!el || el.tagName === "INPUT" || el.disabled) return;
+  var fn = A[el.getAttribute("data-a")];
+  if (fn) { e.preventDefault(); fn(el.getAttribute("data-v")); }
+});
+document.addEventListener("change", function (e) {
+  var el = e.target;
+  if (el.getAttribute && el.getAttribute("data-a") === "file" && el.files && el.files[0]) {
+    var fr = new FileReader();
+    fr.onload = function () { importText(String(fr.result)); };
+    fr.readAsText(el.files[0]);
+    el.value = "";
+  }
+});
+document.addEventListener("keydown", function (e) {
+  if (e.metaKey || e.ctrlKey || e.altKey || /INPUT|TEXTAREA/.test((e.target && e.target.tagName) || "")) return;
+  var k = e.key.toLowerCase();
+  if (view === "q" && ses) {
+    var q = QMAP[cur().id];
+    if (ses.phase === "ask" && q.type === "mc" && /^[1-4a-d]$/.test(k)) { var idx = /\d/.test(k) ? Number(k) - 1 : "abcd".indexOf(k); A.pick(String(ses.ord[idx])); e.preventDefault(); }
+    else if (ses.phase === "ask" && q.type === "tf" && (k === "v" || k === "f")) { A.tf(k === "v" ? "true" : "false"); e.preventDefault(); }
+    else if (ses.phase === "conf" && (k === "1" || k === "2")) { k === "1" ? A.sure() : A.doubt(); e.preventDefault(); }
+    else if ((ses.phase === "right" || ses.phase === "wrong") && (k === "enter" || k === " ")) { next(); e.preventDefault(); }
+  } else if (view === "sim" && ses) {
+    if (/^[1-4a-d]$/.test(k)) { var j = /\d/.test(k) ? Number(k) - 1 : "abcd".indexOf(k); A.simPick(String(ses.ords[ses.i][j])); e.preventDefault(); }
+    else if (k === "arrowright") A.simNext(); else if (k === "arrowleft") A.simPrev();
+  }
+});
+// Otra pestaña ha guardado: se une su progreso con el de esta (nunca se descarta ninguno).
+window.addEventListener("storage", function (e) {
+  if (e.key !== KEY || !e.newValue || !Store.state) return;
+  try {
+    var other = JSON.parse(e.newValue);
+    if (!validState(other)) return;
+    if (other.schema > SCHEMA) { Store.readOnly = true; render(); return; }
+    Store.state = mergeStates(Store.state, normalize(other));
+    Store.lastSeen = other.updatedAt;
+    if (view === "home" || view === "progress") render();
+  } catch (err) {}
+});
+// Aviso antes de cerrar con un simulacro a medias.
+window.addEventListener("beforeunload", function (e) { if (ses && ses.kind === "sim") { e.preventDefault(); e.returnValue = ""; } });
+
+Store.init().then(function () { render(); }).catch(function (err) {
+  app.innerHTML = '<div class="banner red"><span class="grow">No se pudo cargar el progreso: ' + esc(err && err.message) + ". No toques nada y recarga la página.</span></div>";
+});
+
+window.__dronExam = { Store: Store, buildRound: buildRound, buildSim: buildSim, version: APP_VERSION };
+})();
+</script>
+</body>
+</html>
