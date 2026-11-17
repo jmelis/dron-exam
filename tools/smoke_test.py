@@ -9,7 +9,8 @@ Comprueba lo esencial, sobre todo que el progreso NO se pierde:
   3. El progreso sobrevive a recargar la página.
   4. Si se borra localStorage, se recupera desde IndexedDB.
   5. Un progreso guardado por una versión futura (schema mayor) se abre en solo lectura y no se pisa.
-  6. Importar una copia guarda antes una copia del progreso actual.
+  6. Importar una copia guarda antes una copia del progreso actual. Se puede cancelar, reemplazar todo,
+     o añadir (unir por pregunta: gana la respuesta más reciente, no se pierde nada y es idempotente).
   7. El simulacro se puede entregar y muestra el resultado.
 """
 import argparse, contextlib, functools, http.server, json, os, pathlib, shutil, socketserver, sys, threading
@@ -31,7 +32,8 @@ def serve():
 
 
 def chrome_path():
-    for p in ("/usr/bin/google-chrome", "/usr/bin/chromium", "/usr/bin/chromium-browser"):
+    for p in ("/usr/bin/google-chrome", "/usr/bin/chromium", "/usr/bin/chromium-browser",
+              "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"):
         if os.path.exists(p):
             return p
     return None
@@ -159,11 +161,52 @@ def main():
         page.wait_for_selector("text=Copia de seguridad")
         if shots:
             page.screenshot(path=str(shots / "06-progreso.png"), full_page=True)
+        # 6a. Cancelar no cambia nada
         page.fill("#codebox", backup_txt)
         page.click("[data-a=paste]")
+        page.wait_for_selector("[data-a=impCancel]")
+        page.click("[data-a=impCancel]")
+        assert page.evaluate("JSON.parse(localStorage.getItem('%s'))" % KEY)["ronda"] == 5
+        assert page.locator(".dlg-back").count() == 0
+
+        # 6b. Reemplazar todo: guarda antes el progreso actual
+        page.click("[data-a=paste]")
+        page.wait_for_selector("[data-a=impReplace]")
+        if shots:
+            page.screenshot(path=str(shots / "06b-importar.png"))
+        page.click("[data-a=impReplace]")
         page.wait_for_selector("text=Siguiente ronda")
         keys = page.evaluate("Object.keys(localStorage)")
         assert any(k.startswith("dron-exam:backup:before-import") for k in keys), keys
+
+        # 6c. Añadir: gana lo más reciente por pregunta, no se pierde nada, es idempotente
+        cur = page.evaluate("JSON.parse(localStorage.getItem('%s'))" % KEY)
+        ids = list(cur["q"].keys())
+        newer, older = ids[0], ids[1]
+        imp = json.loads(json.dumps(cur))
+        imp["ronda"] = 3
+        imp["q"][newer] = dict(cur["q"][newer], l=5, at=cur["q"][newer]["at"] + 10000)
+        imp["q"][older] = dict(cur["q"][older], l=5, at=1)
+        imp["q"]["t99-01"] = {"l": 2, "n": 1, "ok": 1, "ko": 0, "d": 9, "lr": 1, "lu": 1, "at": 5}
+        imp["sims"] = [{"r": 1, "at": "2020-01-01T00:00:00.000Z", "score": 31, "total": 40, "byT": {}, "mins": 30}]
+        page.click("[data-a=progress]")
+        for attempt in range(2):
+            page.fill("#codebox", json.dumps({"app": "dron-exam", "state": imp}))
+            page.click("[data-a=paste]")
+            page.wait_for_selector("[data-a=impAppend]")
+            page.click("[data-a=impAppend]")
+            page.wait_for_selector("text=Siguiente ronda")
+            page.click("[data-a=progress]")
+            page.wait_for_selector("text=Copia de seguridad")
+            res = page.evaluate("JSON.parse(localStorage.getItem('%s'))" % KEY)
+            assert res["q"][newer]["l"] == 5, "la respuesta más reciente de la copia debía ganar"
+            assert res["q"][older]["l"] == cur["q"][older]["l"], "la respuesta más reciente local debía ganar"
+            assert "t99-01" in res["q"], "una pregunta desconocida no se debe descartar"
+            assert len(res["q"]) == len(cur["q"]) + 1, (len(res["q"]), len(cur["q"]))
+            assert res["ronda"] == 5 and len(res["sims"]) == 1, (res["ronda"], len(res["sims"]))
+        assert any(k.startswith("dron-exam:backup:before-import-append") for k in page.evaluate("Object.keys(localStorage)"))
+        page.click("[data-a=home]")
+        page.wait_for_selector("text=Siguiente ronda")
 
         # 7. Simulacro
         page.click("[data-a=sim]")
@@ -178,7 +221,7 @@ def main():
         if shots:
             page.screenshot(path=str(shots / "08-resultado.png"))
         st4 = page.evaluate("JSON.parse(localStorage.getItem('%s'))" % KEY)
-        assert len(st4["sims"]) == 1 and st4["ronda"] == 6, (len(st4["sims"]), st4["ronda"])
+        assert len(st4["sims"]) == 2 and st4["ronda"] == 6  # 1 importado en 6c + 1 nuevo, (len(st4["sims"]), st4["ronda"])
 
         # Chuleta
         page.click("[data-a=home]")

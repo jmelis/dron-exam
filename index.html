@@ -243,6 +243,11 @@ textarea{width:100%;min-height:110px;border-radius:12px;border:1px solid var(--l
 .cf b{font-family:var(--head);font-size:18px}
 .cf .pg{color:var(--mute);text-align:right}
 
+.dlg-back{position:fixed;inset:0;background:rgba(14,23,38,.6);z-index:60;display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
+.dlg{width:min(540px,100%);max-height:100%;overflow:auto;text-align:left}
+.dlg .opt{border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;align-items:stretch;gap:6px}
+.dlg .opt.rec{border:2px solid var(--blue)}
+.dlg .opt p{font-size:14px;line-height:1.45}
 .toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));transform:translateX(-50%);background:#0E1726;color:#fff;padding:12px 18px;border-radius:12px;font-size:15px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:50;max-width:min(92vw,520px);text-align:center}
 </style>
 </head>
@@ -275,7 +280,7 @@ textarea{width:100%;min-height:110px;border-radius:12px;border:1px solid var(--l
 /* =====================================================================
    Constantes
    ===================================================================== */
-var APP_VERSION = "1.0.0";
+var APP_VERSION = "1.1.0";
 var SCHEMA = 1;                       // versión del formato guardado. Si cambia: añadir migración en MIGRATIONS.
 var NS = "dron-exam:";                // prefijo de TODAS las claves (el dominio jmelis.github.io es compartido)
 var KEY = NS + "state";
@@ -427,6 +432,28 @@ function mergeStates(a, b) {
   return r;
 }
 
+// Añade un progreso importado al actual. Idempotente (importar dos veces la misma copia no cambia nada)
+// y no descarta nada del progreso actual: por pregunta gana la respuesta más reciente.
+function appendState(cur, imp) {
+  var clean = JSON.parse(JSON.stringify(imp));
+  Object.keys(clean.q).forEach(function (id) { if (!clean.q[id] || typeof clean.q[id] !== "object") delete clean.q[id]; });
+  var r = mergeStates(cur, normalize(clean));
+  if (imp.createdAt && String(imp.createdAt) < String(cur.createdAt)) r.createdAt = imp.createdAt;
+  return r;
+}
+// Qué aportaría añadir `imp` a `cur`: preguntas nuevas, preguntas con respuesta más reciente en la copia, simulacros nuevos.
+function appendPreview(cur, imp) {
+  var add = 0, upd = 0, sims = 0, have = {};
+  Object.keys(imp.q).forEach(function (id) {
+    var x = imp.q[id], y = cur.q[id];
+    if (!x || typeof x !== "object") return;
+    if (!y) add++; else if ((x.at || 0) > (y.at || 0)) upd++;
+  });
+  (cur.sims || []).forEach(function (s) { have[String(s.at)] = 1; });
+  (imp.sims || []).forEach(function (s) { if (!have[String(s.at)]) sims++; });
+  return { add: add, upd: upd, sims: sims };
+}
+
 var Store = {
   state: null, readOnly: false, persisted: null, saveFailed: false, lastSeen: null,
   init: function () {
@@ -499,6 +526,12 @@ var Store = {
     stash(why, JSON.stringify(this.state));
     this.state = normalize(s);
     this.readOnly = false;
+    this.save();
+  },
+  absorb: function (s, why) {
+    if (this.readOnly) return;
+    stash(why, JSON.stringify(this.state));
+    this.state = normalize(appendState(this.state, s));
     this.save();
   }
 };
@@ -801,12 +834,45 @@ function importText(txt) {
   var s = data && data.state ? data.state : data;
   if (!validState(s)) { toast("Ese texto no es una copia válida."); return; }
   if (s.schema > SCHEMA) { toast("La copia es de una versión más nueva de la app. Recarga la página y vuelve a intentarlo."); return; }
-  var answered = Object.keys(s.q).length;
-  if (!confirm("¿Restaurar esta copia (" + s.ronda + " rondas, " + answered + " preguntas vistas)? Tu progreso actual se guarda aparte por si acaso.")) return;
-  stash("before-import", JSON.stringify(S()));
   while (s.schema < SCHEMA) { if (!MIGRATIONS[s.schema]) { toast("No sé convertir esa copia."); return; } s = MIGRATIONS[s.schema](s); }
-  Store.replace(s, "replaced-by-import");
-  toast("Progreso restaurado."); go("home");
+  pendingImport = s;
+  showImportDialog();
+}
+var pendingImport = null;
+function seenCount(st) { return Object.keys(st.q).filter(function (id) { return st.q[id] && st.q[id].n > 0; }).length; }
+function summary(st) {
+  var n = (st.sims || []).length;
+  return st.ronda + plural(st.ronda, " ronda", " rondas") + " · " + seenCount(st) + " preguntas vistas · " + n + plural(n, " simulacro", " simulacros");
+}
+function closeImportDialog() { var d = document.querySelector(".dlg-back"); if (d) d.remove(); pendingImport = null; }
+function showImportDialog() {
+  var old = document.querySelector(".dlg-back"); if (old) old.remove();
+  var cur = S(), imp = pendingImport, pv = appendPreview(cur, imp);
+  var appendOpt = Store.readOnly
+    ? '<div class="opt"><b>Añadir a mi progreso</b><p class="muted">No disponible: tu progreso actual es de una versión más nueva de la app. Recarga la página para actualizarla.</p></div>'
+    : '<div class="opt rec"><b>Añadir a mi progreso</b><p class="muted">Une la copia con lo que ya tienes. De cada pregunta se queda la respuesta más reciente y no se pierde nada. Se puede repetir sin problema.</p>' +
+      '<p><b>' + pv.add + "</b> preguntas nuevas · <b>" + pv.upd + "</b> con respuesta más reciente en la copia · <b>" + pv.sims + "</b> " + plural(pv.sims, "simulacro nuevo", "simulacros nuevos") + '</p><button class="btn primary" data-a="impAppend">Añadir</button></div>';
+  var el = document.createElement("div");
+  el.className = "dlg-back"; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true");
+  el.innerHTML = '<div class="dlg card stack" style="gap:12px"><h2 style="font-size:20px">Importar copia</h2>' +
+    '<p class="small muted"><b>Copia:</b> ' + esc(summary(imp)) + "<br><b>Ahora:</b> " + esc(summary(cur)) + "</p>" + appendOpt +
+    '<div class="opt"><b>Reemplazar todo</b><p class="muted">Tu progreso actual se sustituye por el de la copia. Antes se guarda aparte una copia interna del actual.</p><button class="btn" data-a="impReplace">Reemplazar todo</button></div>' +
+    '<button class="btn" data-a="impCancel">Cancelar</button></div>';
+  document.body.appendChild(el);
+}
+function runImport(mode) {
+  var s = pendingImport; if (!s) return;
+  closeImportDialog();
+  if (mode === "append") {
+    var pv = appendPreview(S(), s);
+    Store.absorb(s, "before-import-append");
+    toast(pv.add || pv.upd || pv.sims ? "Copia añadida: " + pv.add + plural(pv.add, " pregunta nueva, ", " preguntas nuevas, ") + pv.upd + " actualizadas." : "La copia no aportaba nada nuevo.");
+  } else {
+    stash("before-import", JSON.stringify(S()));
+    Store.replace(s, "replaced-by-import");
+    toast("Progreso restaurado.");
+  }
+  go("home");
 }
 function restoreSnapshot(i) {
   var list = Store.snapshots(), sn = list[i]; if (!sn) return;
@@ -1092,8 +1158,8 @@ function vProgress() {
     '<div class="card" style="background:var(--bg);margin-top:10px"><b>¿Cuándo estás listo?</b><p class="muted" style="margin-top:4px">' + (isReady() ? "Ya: llevas 3 simulacros seguidos con 34/40 o más." : "Cuando saques 34/40 o más en 3 simulacros seguidos, te lo marco aquí. Sin prisas ni fechas.") + "</p></div></section>" +
     '<section class="card stack"><h2 style="font-size:18px">Copia de seguridad</h2><p class="muted">Tu progreso se guarda en este dispositivo (doble copia interna). Para estar a salvo si Safari borra los datos, guarda una copia fuera de vez en cuando.</p>' +
     '<button class="btn primary" data-a="download">Guardar copia (archivo)</button><button class="btn" data-a="copy">Copiar como texto</button>' +
-    '<label class="btn" style="position:relative">Restaurar desde archivo<input type="file" accept=".json,application/json" data-a="file" style="position:absolute;inset:0;opacity:0;cursor:pointer"></label>' +
-    '<textarea id="codebox" placeholder="…o pega aquí el texto de una copia y pulsa «Restaurar texto»"></textarea><button class="btn" data-a="paste">Restaurar texto</button>' +
+    '<label class="btn" style="position:relative">Importar desde archivo<input type="file" accept=".json,application/json" data-a="file" style="position:absolute;inset:0;opacity:0;cursor:pointer"></label>' +
+    '<textarea id="codebox" placeholder="…o pega aquí el texto de una copia y pulsa «Importar texto»"></textarea><button class="btn" data-a="paste">Importar texto</button>' +
     '<p class="small muted">' + esc(lastB) + "</p><h3 style=\"font-size:15px;margin-top:6px\">Copias automáticas</h3>" + snapHtml +
     '<p class="small muted">Almacenamiento persistente: ' + (Store.persisted === true ? "sí" : Store.persisted === false ? "no concedido" : "desconocido") + " · Versión " + APP_VERSION + " · formato " + SCHEMA + "</p></section></div>" +
     '<section class="card"><h2 style="font-size:18px;margin-bottom:6px">Por temas</h2><table class="tbl"><tr><th>Tema</th><th>Páginas</th><th>Vistas</th><th>Dominio</th><th></th></tr>' + topics + "</table></section></div>";
@@ -1151,6 +1217,9 @@ var A = {
   download: downloadBackup,
   copy: copyBackup,
   paste: function () { var t = document.getElementById("codebox"); if (t && t.value.trim()) importText(t.value.trim()); else toast("Pega primero el texto de una copia."); },
+  impAppend: function () { runImport("append"); },
+  impReplace: function () { runImport("replace"); },
+  impCancel: closeImportDialog,
   snap: function (v) { restoreSnapshot(Number(v)); },
   hideInstall: function () { S().ui.hideInstall = true; Store.save(); render(); }
 };
