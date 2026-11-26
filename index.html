@@ -288,7 +288,7 @@ textarea{width:100%;min-height:110px;border-radius:12px;border:1px solid var(--l
 .ap .box .ic{flex-shrink:0;font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding-top:3px}
 .ap .box.ojo{background:var(--kot);color:var(--kod)} .ap .box.ojo b{color:var(--kod)}
 .ap .box.tip{background:var(--tipbg);color:var(--tipink)} .ap .box.tip b{color:var(--tipink)}
-.ap .box.nov{background:var(--amt);color:var(--amd)} .ap .box.nov b{color:var(--amd)}
+.ap .box.novb{background:var(--amt);color:var(--amd)} .ap .box.novb b{color:var(--amd)}
 .ap .box > div{flex:1 1 auto;min-width:0}
 .ap .box .ic + div{font-size:16px}
 .ap .kv{margin:0 0 16px;border-radius:12px;border:1px solid var(--line);background:var(--card);overflow:hidden}
@@ -353,6 +353,8 @@ textarea{width:100%;min-height:110px;border-radius:12px;border:1px solid var(--l
 <!-- Apuntes (teoría) por tema. Si añades un fichero a data/apuntes/, añádelo aquí. -->
 <script src="data/apuntes/t01.js"></script>
 <script src="data/apuntes/t02.js"></script>
+<script src="data/apuntes/t03.js"></script>
+<script src="data/apuntes/t04.js"></script>
 
 <script>
 (function () {
@@ -361,7 +363,7 @@ textarea{width:100%;min-height:110px;border-radius:12px;border:1px solid var(--l
 /* =====================================================================
    Constantes
    ===================================================================== */
-var APP_VERSION = "1.2.0";
+var APP_VERSION = "1.2.1";
 var SCHEMA = 2;                       // versión del formato guardado. Si cambia: añadir migración en MIGRATIONS.
 var NS = "dron-exam:";                // prefijo de TODAS las claves (el dominio jmelis.github.io es compartido)
 var KEY = NS + "state";
@@ -1359,7 +1361,7 @@ function renderBlocks(sec) {
     else if (b.tl) out += '<ol class="tl">' + b.tl.map(function (r) { return '<li><b class="t">' + fmt(r[0]) + "</b>" + fmt(r[1]) + "</li>"; }).join("") + "</ol>";
     else if (b.ojo != null) out += '<div class="box ojo"><span class="ic">Ojo</span><div>' + fmt(b.ojo) + "</div></div>";
     else if (b.tip != null) out += '<div class="box tip"><span class="ic">Truco</span><div>' + fmt(b.tip) + "</div></div>";
-    else if (b.nov != null) out += '<div class="box nov"><span class="ic">Novedad</span><div>' + fmt(b.nov) + "</div></div>";
+    else if (b.nov != null) out += '<div class="box novb"><span class="ic">Novedad</span><div>' + fmt(b.nov) + "</div></div>";
     else if (b.img) out += '<figure><a href="' + esc(b.img) + '" target="_blank" rel="noopener"><img src="' + esc(b.img) + '" alt="' + esc(b.alt || "") + '" loading="lazy"></a><figcaption>Toca la imagen para verla en grande · temario p. ' + pg + "</figcaption></figure>";
     else if (b.cards) out += '<div class="cards">' + b.cards.map(function (c) {
       return "<section><h4>" + fmt(c.t) + "</h4><dl>" + c.rows.map(function (r) { return "<dt>" + fmt(r[0]) + "</dt><dd>" + fmt(r[1]) + "</dd>"; }).join("") + "</dl></section>";

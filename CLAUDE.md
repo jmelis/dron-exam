@@ -171,7 +171,7 @@ documented at the top of `data/topics.js`:
   one of its cited pages (validator fails if a question of a topic with notes fits no section).
 - Write from the Ed.12 PDF only, cover everything on the slides, keep sections to ~3–6 min of reading.
   Turn slide tables into `cards`/`kv` (no wide tables: portrait phone). `ojo` = what the questions test.
-- Status (Nov 2026): notes for topics 1–2 (pilot). Topics 3–15 show "apuntes en preparación" with a PDF
+- Status (Nov 2026): notes for topics 1–4. Topics without notes show "apuntes en preparación" with a PDF
   link and a "Ya lo he estudiado" button. Next: write the rest in the same format.
 
 ## 6. Workflow
