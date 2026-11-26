@@ -15,11 +15,17 @@ The UI and all content are in **Spanish**. Code comments may be Spanish or Engli
 - **Spaced repetition, but flexible.** Counted in **rounds (rondas), never in days**:
   some days the user does many rounds, some days none. Plain SRS bored them in the past.
 - **No cap on new questions.** The user can drill as much as they want.
+- **Study first, then quiz, section by section** (asked Nov 2026: "the current system is not working
+  for me"). Each topic has short **notes (apuntes)** in the app, split into sections of a few minutes;
+  the user reads a section, then "Comprobar" quizzes just that section. **New questions only come from
+  studied sections** (switch "Todo el temario" turns this off; Simulacro always uses everything).
+- The user wants to study **entirely from the phone**: the AESA PDF is landscape slides and unusable in
+  portrait, so the notes must cover *everything* on the slides (compact, reflowed), not a loose summary.
 - Questions **classified by topic**; the app shows topics.
 - **4 options, one correct.** When the user picks a wrong option, explain **why that
   option is wrong**, why the right one is right, and the **page of the PDF**.
 - Questions should look like the real exam.
-- **Optimised for iPad** (landscape, two columns) and still good on a phone.
+- **Mobile portrait first** (iPhone), still good on iPad landscape (two columns).
 - **Progress stored on the device itself.** Same device always (iPad).
 - **NEVER lose progress** (see section 4). Updates to the app must not wipe it.
 - No exam date / no deadline: "lo que tarde".
@@ -30,8 +36,11 @@ The UI and all content are in **Spanish**. Code comments may be Spanish or Engli
   = document **FOR-UAS-P01-DT01 Ed.09 (July 2024)**, 161 pages, includes RD 517/2024.
   URL: <https://www.seguridadaerea.gob.es/sites/default/files/_Formacion.temario.completo.Ed12.pdf>
   Every question cites pages of **this** PDF (`p` field). The app links to `PDF_URL#page=N`.
-- The user's older 2022 course PDF (v6) is outdated (operator age 18, insurance, transition
-  rules…). Do not use it as a source.
+- The user's older 2022 course PDF (`Curso.Formacion.A1.A3.Completo.v6.pdf` / `…v8.pdf`, both
+  "Versión 6 (Mayo 2022)", 139–140 pages) is outdated (RD 1036/2017, operator age 18, insurance,
+  transition rules…). Do not use it as a source. Checked Nov 2026: AESA's open-category training page
+  links "Temario curso formación subcategoría A1/A3 Ed.12" = the file above.
+- Network: the cloud environment "dron-exam" allows `www.seguridadaerea.gob.es` to download the PDF.
 - Exam (AESA web, checked Nov 2026): **40 questions, 40 minutes, pass ≥ 75 % (30/40)**,
   2 attempts per enrolment. An expired certificate means *renovación*: redo the online
   course + exam, new pilot number.
@@ -56,7 +65,12 @@ Design mockups (private canvas): <https://claude.ai/artifact/NeQMVAaQtiT7MCzWYMU
   - Order/match answered right → treated as "Lo sabía".
 - **Round composition (Mezcla)**: due questions first; ~50 % new when there are new ones
   (25 % if more than 15 questions sit at level 1); then any other seen questions.
-  Modes: Mezcla, Nuevas, Repaso, Fallos, one topic, one "cifras" family, a given list of ids.
+  Modes: Mezcla, Nuevas, Repaso, Fallos, one topic, one "cifras" family, a given list of ids,
+  one section ("Comprobar": all its questions). All modes except Simulacro, the id list and the
+  section check only take **new** questions from studied sections (`isOpen`), unless `settings.all`.
+- **Study flow**: home card "Estudiar" → next unread section → lesson (notes) → "Comprobar esta sección"
+  or "Siguiente" (both mark it read) → end screen offers the next section. A wrong answer shows
+  "Ver teoría", which opens the notes at the cited page and comes back to the same question.
 - **Anti-boredom**: short rounds with a summary screen ("¿Otra?"), Supervivencia (until
   3rd mistake, record kept), Simulacro 40/40 with timer and per-topic result, a "Chuleta
   de cifras" (all numbers, each family practicable), mixed formats (~25 % of the bank:
@@ -75,13 +89,17 @@ Anything that breaks it is the worst possible bug. Rules:
    telling the user to export a backup first.
 2. All storage keys start with `dron-exam:` (the origin is shared with the user's other
    Pages sites). Main key: `dron-exam:state`. IndexedDB database `dron-exam`, store `kv`.
-3. **Question IDs are permanent.** Format `tNN-MM` (topic + number). Never renumber, never
+3. **Question IDs are permanent.** Format `tNN-MM` (topic + number). **Section IDs** of the notes
+   (`sNN-M`) are permanent too (`state.study` uses them); retired ones go to `retired-ids.json` as well. Never renumber, never
    reuse an id, never change the *meaning* of a question under an existing id (create a new
    id instead; typo fixes and better explanations are fine). When deleting a question, add
    its id to `data/retired-ids.json` (the validator then forbids reusing it).
    Topic ids are permanent too.
-4. **Saved state format** (`SCHEMA` in `index.html`, currently 1):
-   `{schema, app, createdAt, updatedAt, ronda, q:{id:{l,n,ok,ko,d,lr,lu,at}}, sims:[], best, settings, lastBackupRonda, ui}`.
+4. **Saved state format** (`SCHEMA` in `index.html`, currently 2):
+   `{schema, app, createdAt, updatedAt, ronda, q:{id:{l,n,ok,ko,d,lr,lu,at}}, sims:[], best, settings, lastBackupRonda, ui, study}`.
+   `study = { "s01-2": {at, r, n} }` = sections read (`at` ms, `r` ronda, `n` times); a key `"t05"` means
+   "topic 5 studied in the PDF" (for topics without notes yet). `settings.all` = "Todo el temario".
+   Schema 1 → 2 (v1.2.0) only added `study`. `mergeStates` unions `study` (newest `at` wins, max `n`).
    To change it: bump `SCHEMA` and add `MIGRATIONS[oldSchema] = s => {...; s.schema = old+1; return s}`.
    Migrations must only add/transform, never drop data. The app stores a raw copy
    (`dron-exam:backup:pre-migration-vN:<ts>`) before migrating.
@@ -135,6 +153,27 @@ Writing rules:
 - `f` (fact key) groups variants of the same fact; used to pull siblings forward after a
   mistake and for the "Chuleta de cifras" families (`CIFRAS` in `index.html`).
 
+## 5b. Notes (apuntes)
+
+Files: `data/apuntes/tNN.js` (one per topic, `AP.add(topic, [sections])`, loaded by `<script>` tags in
+`index.html`), images in `img/` (crops of the PDF figures, WebP ~1200 px wide). Block format is
+documented at the top of `data/topics.js`:
+
+```js
+{ id: "s02-2", title: "Altura máxima: 120 m", pages: [19, 19], extra: ["t02-99"] /* optional */,
+  blocks: [ { h: "Subtítulo", pg: 19 }, { p: "texto con **negrita**" }, { ul: [...] }, { ol: [...] },
+            { def: "Término", d: "definición" }, { kv: [["120 m", "qué es"]] }, { tl: [["2014", "…"]] },
+            { ojo: "trampa típica de examen" }, { tip: "truco" }, { nov: "novedad 2024" },
+            { img: "img/p019-altura.webp", alt: "…" }, { cards: [{ t: "A1", rows: [["UAS", "…"]] }] } ] }
+```
+
+- A question belongs to the section of its topic that lists it in `extra` or whose `pages` range contains
+  one of its cited pages (validator fails if a question of a topic with notes fits no section).
+- Write from the Ed.12 PDF only, cover everything on the slides, keep sections to ~3–6 min of reading.
+  Turn slide tables into `cards`/`kv` (no wide tables: portrait phone). `ojo` = what the questions test.
+- Status (Nov 2026): notes for topics 1–2 (pilot). Topics 3–15 show "apuntes en preparación" with a PDF
+  link and a "Ya lo he estudiado" button. Next: write the rest in the same format.
+
 ## 6. Workflow
 
 ```bash
@@ -153,8 +192,10 @@ python3 -m http.server 8000             # manual testing at http://localhost:800
 
 ```
 index.html            app (CSS + JS inline): storage, round engine, views, actions
-data/topics.js        topics + QB registry
+data/topics.js        topics + QB registry + AP (notes) registry and block format
 data/tNN.js           questions per topic
+data/apuntes/tNN.js   notes per topic, split in sections
+img/                  figures cropped from the PDF, used by the notes
 data/retired-ids.json ids that must never be reused
 manifest.webmanifest, icons/   "Añadir a pantalla de inicio"
 tools/validate.mjs    bank validator (node)

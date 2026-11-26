@@ -13,7 +13,8 @@ ctx.window = ctx;
 vm.createContext(ctx);
 for (const s of scripts) vm.runInContext(fs.readFileSync(path.join(root, s), "utf8"), ctx, { filename: s });
 
-const dataFiles = fs.readdirSync(path.join(root, "data")).filter(f => f.endsWith(".js")).map(f => "data/" + f);
+const listJs = d => fs.existsSync(path.join(root, d)) ? fs.readdirSync(path.join(root, d)).filter(f => f.endsWith(".js")).map(f => d + "/" + f) : [];
+const dataFiles = [...listJs("data"), ...listJs("data/apuntes")];
 const errors = [];
 const warn = [];
 for (const f of dataFiles) if (!scripts.includes(f)) errors.push(`${f} existe pero index.html no lo carga`);
@@ -61,19 +62,68 @@ for (const q of Q) {
   } else errors.push(`${where}: tipo desconocido ${q.type}`);
 }
 
+for (const t of TOPICS) if (!byTopic[t.id]) warn.push(`El tema ${t.id} no tiene preguntas`);
+
+// Apuntes: IDs de sección permanentes, páginas válidas, bloques conocidos, imágenes que existen
+// y cada pregunta de un tema con apuntes asignada a una sección (por `extra` o por página).
+const AP = (ctx.AP && ctx.AP.byTopic) || {};
+const secIds = new Set();
+const KINDS = ["h", "p", "ul", "ol", "def", "kv", "tl", "ojo", "tip", "nov", "img", "cards"];
+const qById = new Map(Q.map(q => [q.id, q]));
+let secCount = 0;
+for (const [tid, secs] of Object.entries(AP)) {
+  const t = Number(tid);
+  if (!topicIds.has(t)) errors.push(`apuntes: el tema ${tid} no existe`);
+  for (const s of secs) {
+    secCount++;
+    const where = `apuntes ${s.id || "(sin id)"}`;
+    if (!s.id || !/^s\d{2}-\d{1,2}$/.test(s.id)) errors.push(`${where}: id de sección con formato inválido (sNN-M)`);
+    if (secIds.has(s.id)) errors.push(`${where}: id de sección duplicado`);
+    secIds.add(s.id);
+    if (s.id && Number(s.id.slice(1, 3)) !== t) errors.push(`${where}: el prefijo del id no coincide con el tema ${t}`);
+    if (!s.title) errors.push(`${where}: falta title`);
+    if (!Array.isArray(s.pages) || s.pages.length !== 2 || s.pages.some(p => !Number.isInteger(p) || p < 1 || p > MAXPAGE) || s.pages[0] > s.pages[1])
+      errors.push(`${where}: pages debe ser [desde, hasta] entre 1 y ${MAXPAGE}`);
+    if (!Array.isArray(s.blocks) || !s.blocks.length) errors.push(`${where}: sin bloques`);
+    for (const [i, b] of (s.blocks || []).entries()) {
+      const kinds = Object.keys(b).filter(k => KINDS.includes(k));
+      if (kinds.length !== 1) errors.push(`${where} bloque ${i}: debe tener exactamente un tipo de ${KINDS.join("/")}`);
+      if (b.pg != null && (!Number.isInteger(b.pg) || b.pg < 1 || b.pg > MAXPAGE)) errors.push(`${where} bloque ${i}: pg inválida`);
+      if (b.def != null && !b.d) errors.push(`${where} bloque ${i}: def sin d`);
+      if (b.img != null) {
+        if (!fs.existsSync(path.join(root, b.img))) errors.push(`${where} bloque ${i}: no existe la imagen ${b.img}`);
+        if (!b.alt) errors.push(`${where} bloque ${i}: imagen sin alt`);
+      }
+      for (const k of ["ul", "ol"]) if (b[k] && (!Array.isArray(b[k]) || !b[k].length)) errors.push(`${where} bloque ${i}: ${k} vacío`);
+      for (const k of ["kv", "tl"]) if (b[k] && (!Array.isArray(b[k]) || b[k].some(r => !Array.isArray(r) || r.length !== 2))) errors.push(`${where} bloque ${i}: ${k} necesita pares [clave, texto]`);
+      const strs = JSON.stringify(b);
+      if ((strs.match(/\*\*/g) || []).length % 2) errors.push(`${where} bloque ${i}: negrita ** sin cerrar`);
+    }
+    for (const id of s.extra || []) {
+      const q = qById.get(id);
+      if (!q) errors.push(`${where}: extra ${id} no existe`);
+      else if (q.t !== t) errors.push(`${where}: extra ${id} es de otro tema`);
+    }
+  }
+  for (const q of Q.filter(q => q.t === t)) {
+    const pages = Array.isArray(q.p) ? q.p : [q.p];
+    const ok = secs.some(s => (s.extra || []).includes(q.id)) || secs.some(s => pages.some(p => p >= s.pages[0] && p <= s.pages[1]));
+    if (!ok) errors.push(`${q.id}: ninguna sección de los apuntes del tema ${t} cubre sus páginas ${JSON.stringify(q.p)} (añádela a \`extra\` de una sección)`);
+  }
+}
 // Los IDs retirados no se pueden reutilizar nunca.
 const retiredPath = path.join(root, "data", "retired-ids.json");
 if (fs.existsSync(retiredPath)) {
   const retired = JSON.parse(fs.readFileSync(retiredPath, "utf8"));
-  for (const id of retired) if (ids.has(id)) errors.push(`${id}: este id está retirado y no se puede reutilizar`);
+  for (const id of retired) if (ids.has(id) || secIds.has(id)) errors.push(`${id}: este id está retirado y no se puede reutilizar`);
 }
 
-for (const t of TOPICS) if (!byTopic[t.id]) warn.push(`El tema ${t.id} no tiene preguntas`);
 if (mcCount && (longestCorrect / mcCount > 0.30 || longestCorrect > longestDistractor * 1.3))
   errors.push(`Sesgo de longitud: la correcta es >10 % más larga que todas las demás en ${longestCorrect}/${mcCount} (una incorrecta lo es en ${longestDistractor}). Igualar longitudes.`);
 
 console.log(`Preguntas: ${Q.length} · por tipo ${JSON.stringify(byType)}`);
 console.log("Por tema:", TOPICS.map(t => `${t.id}:${byTopic[t.id] || 0}`).join("  "));
+console.log(`Apuntes: ${secCount} secciones en ${Object.keys(AP).length} temas`);
 console.log(`Correcta claramente más larga: ${longestCorrect}/${mcCount} · una incorrecta claramente más larga: ${longestDistractor}/${mcCount}`);
 warn.forEach(w => console.log("AVISO:", w));
 if (errors.length) { errors.forEach(e => console.log("ERROR:", e)); process.exit(1); }

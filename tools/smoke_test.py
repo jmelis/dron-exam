@@ -12,6 +12,9 @@ Comprueba lo esencial, sobre todo que el progreso NO se pierde:
   6. Importar una copia guarda antes una copia del progreso actual. Se puede cancelar, reemplazar todo,
      o añadir (unir por pregunta: gana la respuesta más reciente, no se pierde nada y es idempotente).
   7. El simulacro se puede entregar y muestra el resultado.
+  8. Estudiar: leer una sección de apuntes, comprobarla, «Ver teoría» desde una pregunta y volver,
+     y que las preguntas nuevas solo salgan de lo estudiado (salvo «todo el temario»).
+  9. Un progreso del formato anterior (schema 1) se migra sin perder nada y deja copia previa.
 """
 import argparse, contextlib, functools, http.server, json, os, pathlib, shutil, socketserver, sys, threading
 
@@ -32,7 +35,7 @@ def serve():
 
 
 def chrome_path():
-    for p in ("/usr/bin/google-chrome", "/usr/bin/chromium", "/usr/bin/chromium-browser",
+    for p in ("/opt/pw-browsers/chromium", "/usr/bin/google-chrome", "/usr/bin/chromium", "/usr/bin/chromium-browser",
               "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"):
         if os.path.exists(p):
             return p
@@ -107,6 +110,45 @@ def main():
         if shots:
             page.screenshot(path=str(shots / "01-inicio.png"))
 
+        # 8. Estudiar: sin nada estudiado no hay preguntas nuevas
+        empty = page.evaluate("window.__dronExam.buildRound({mode: 'mix', len: 12})")
+        assert empty == [], empty
+        # Leer la primera sección desde la tarjeta «Estudiar» y comprobarla
+        page.click(".study [data-a=read]")
+        page.wait_for_selector(".ap h1")
+        if shots:
+            page.screenshot(path=str(shots / "01b-apuntes.png"))
+        page.click(".lend [data-a=check]")
+        page.locator("[data-a=pick], [data-a=tf], [data-a=place], [data-a=match]").first.wait_for()
+        # «Ver teoría» desde la respuesta y volver a la misma pregunta
+        page.locator("[data-a=pick]:not([disabled]), [data-a=tf]:not([disabled])").first.click()
+        page.locator("[data-a=theory]").first.click()
+        page.wait_for_selector(".ap h1")
+        page.click("[data-a=lessonBack]")
+        page.locator("[data-a=next], [data-a=sure]").first.wait_for()
+        answer_round(page, None)
+        st0 = page.evaluate("JSON.parse(localStorage.getItem('%s'))" % KEY)
+        assert st0["schema"] == 2 and "s01-1" in st0["study"] and st0["ronda"] == 1, (st0["schema"], st0["study"], st0["ronda"])
+        sec1 = page.evaluate("window.__dronExam.secQ['s01-1'].map(q => q.id)")
+        assert set(st0["q"].keys()) == set(sec1), "la ronda de la sección debía preguntar justo sus preguntas"
+        assert page.locator("text=Siguiente: Historia y marco normativo").count() == 1
+        # Las nuevas solo salen de secciones estudiadas
+        page.click("[data-a=home]")
+        page.click("[data-a=topic][data-v='2']")
+        page.click("[data-a=read][data-v='s02-2']")
+        page.wait_for_selector(".ap h1")
+        page.click("[data-a=nextSec][data-v='s02-2']")   # pasar a la siguiente marca la sección como estudiada
+        page.wait_for_selector("text=Aeronaves tripuladas, personas, observador y objetos")
+        ok_ids = set(sec1) | set(page.evaluate("window.__dronExam.secQ['s02-2'].map(q => q.id)"))
+        for _ in range(5):
+            ids = page.evaluate("window.__dronExam.buildRound({mode: 'nuevas', len: 20})")
+            assert ids and set(ids) <= ok_ids, set(ids) - ok_ids
+        page.click("[data-a=lessonBack]")
+        page.click("[data-a=home]")
+        # Activar «todo el temario» para el resto de la prueba
+        page.click("[data-a=toggleAll]")
+        assert page.evaluate("JSON.parse(localStorage.getItem('%s'))" % KEY)["settings"]["all"] is True
+
         # 2. Una ronda con todos los formatos: forzamos una ronda larga con los temas que tienen order/match.
         page.click("[data-a=len][data-v='20']")
         page.click("[data-a=start]")
@@ -114,27 +156,28 @@ def main():
         if shots:
             page.screenshot(path=str(shots / "05-fin-ronda.png"))
         st = page.evaluate("JSON.parse(localStorage.getItem('%s'))" % KEY)
-        assert st["ronda"] == 1, st["ronda"]
+        assert st["ronda"] == 2, st["ronda"]
         assert len(st["q"]) >= 18, len(st["q"])
 
         # Formatos especiales: ronda del tema 15 (tiene ordenar y emparejar) y del 8.
         for topic in ("15", "8", "9"):
             page.click("[data-a=home]")
             page.click("[data-a=topic][data-v='%s']" % topic)
+            page.click("[data-a=topicRound]")
             answer_round(page, None)
 
         # 3. Recargar conserva el progreso
         page.reload()
         page.wait_for_selector("text=Siguiente ronda")
         st2 = page.evaluate("JSON.parse(localStorage.getItem('%s'))" % KEY)
-        assert st2["ronda"] == 4, st2["ronda"]
+        assert st2["ronda"] == 5, st2["ronda"]
 
         # 4. Borrar localStorage -> se recupera de IndexedDB
         page.evaluate("localStorage.removeItem('%s')" % KEY)
         page.reload()
         page.wait_for_selector("text=Siguiente ronda")
         st3 = page.evaluate("JSON.parse(localStorage.getItem('%s'))" % KEY)
-        assert st3 and st3["ronda"] == 4, "no se recuperó de IndexedDB"
+        assert st3 and st3["ronda"] == 5 and "s02-2" in st3["study"], "no se recuperó de IndexedDB"
 
         # 4b. Dos pestañas: lo que se responde en una no se pierde cuando la otra guarda
         other = ctx.new_page()
@@ -152,7 +195,7 @@ def main():
         other.close()
         page.click("[data-a=mode][data-v='repaso']")  # la pestaña vieja guarda
         merged = page.evaluate("JSON.parse(localStorage.getItem('%s'))" % KEY)
-        assert len(merged["q"]) == in_other and merged["ronda"] == 5, (len(merged["q"]), in_other, merged["ronda"])
+        assert len(merged["q"]) == in_other and merged["ronda"] == 6, (len(merged["q"]), in_other, merged["ronda"])
         st3 = merged
 
         # 6. Importar una copia: guarda antes el progreso actual
@@ -166,7 +209,7 @@ def main():
         page.click("[data-a=paste]")
         page.wait_for_selector("[data-a=impCancel]")
         page.click("[data-a=impCancel]")
-        assert page.evaluate("JSON.parse(localStorage.getItem('%s'))" % KEY)["ronda"] == 5
+        assert page.evaluate("JSON.parse(localStorage.getItem('%s'))" % KEY)["ronda"] == 6
         assert page.locator(".dlg-back").count() == 0
 
         # 6b. Reemplazar todo: guarda antes el progreso actual
@@ -189,6 +232,7 @@ def main():
         imp["q"][older] = dict(cur["q"][older], l=5, at=1)
         imp["q"]["t99-01"] = {"l": 2, "n": 1, "ok": 1, "ko": 0, "d": 9, "lr": 1, "lu": 1, "at": 5}
         imp["sims"] = [{"r": 1, "at": "2020-01-01T00:00:00.000Z", "score": 31, "total": 40, "byT": {}, "mins": 30}]
+        imp["study"] = {"s02-1": {"at": 5, "r": 1, "n": 1}}
         page.click("[data-a=progress]")
         for attempt in range(2):
             page.fill("#codebox", json.dumps({"app": "dron-exam", "state": imp}))
@@ -203,7 +247,8 @@ def main():
             assert res["q"][older]["l"] == cur["q"][older]["l"], "la respuesta más reciente local debía ganar"
             assert "t99-01" in res["q"], "una pregunta desconocida no se debe descartar"
             assert len(res["q"]) == len(cur["q"]) + 1, (len(res["q"]), len(cur["q"]))
-            assert res["ronda"] == 5 and len(res["sims"]) == 1, (res["ronda"], len(res["sims"]))
+            assert res["ronda"] == 6 and len(res["sims"]) == 1, (res["ronda"], len(res["sims"]))
+            assert {"s01-1", "s02-1", "s02-2"} <= set(res["study"]), res["study"]
         assert any(k.startswith("dron-exam:backup:before-import-append") for k in page.evaluate("Object.keys(localStorage)"))
         page.click("[data-a=home]")
         page.wait_for_selector("text=Siguiente ronda")
@@ -221,7 +266,13 @@ def main():
         if shots:
             page.screenshot(path=str(shots / "08-resultado.png"))
         st4 = page.evaluate("JSON.parse(localStorage.getItem('%s'))" % KEY)
-        assert len(st4["sims"]) == 2 and st4["ronda"] == 6  # 1 importado en 6c + 1 nuevo, (len(st4["sims"]), st4["ronda"])
+        assert len(st4["sims"]) == 2 and st4["ronda"] == 7, (len(st4["sims"]), st4["ronda"])  # 1 importado en 6c + 1 nuevo
+
+        # Unir secciones estudiadas: unión, gana la lectura más reciente y el mayor número de lecturas
+        m = page.evaluate("""() => window.__dronExam.mergeStates(
+            {q: {}, sims: [], study: {"s01-1": {at: 10, r: 1, n: 1}, "s01-2": {at: 3, r: 0, n: 1}}},
+            {q: {}, sims: [], study: {"s01-1": {at: 20, r: 2, n: 1}, "t05": {at: 1, r: 0, n: 1}}})""")
+        assert set(m["study"]) == {"s01-1", "s01-2", "t05"} and m["study"]["s01-1"]["at"] == 20, m["study"]
 
         # Chuleta
         page.click("[data-a=home]")
@@ -242,6 +293,15 @@ def main():
         assert st5["schema"] == 99 and st5["ronda"] == 777, "se pisó un progreso de versión futura"
         page.evaluate("s => localStorage.setItem('%s', JSON.stringify(s))" % KEY, st4)
 
+        # 9. Migración: un progreso del formato 1 (sin `study`) pasa al 2 sin perder nada y deja copia previa
+        old = json.loads(json.dumps(st4)); old["schema"] = 1; old.pop("study", None); old["updatedAt"] = "2099-01-01T00:00:00.000Z"
+        page.evaluate("s => { localStorage.setItem('%s', JSON.stringify(s)); }" % KEY, old)
+        page.reload()
+        page.wait_for_selector("text=Siguiente ronda")
+        mig = page.evaluate("JSON.parse(localStorage.getItem('%s'))" % KEY)
+        assert mig["schema"] == 2 and mig["study"] == {} and mig["q"] == old["q"] and mig["ronda"] == old["ronda"], "la migración perdió datos"
+        assert any(k.startswith("dron-exam:backup:pre-migration-v1") for k in page.evaluate("Object.keys(localStorage)"))
+
         # Móvil y modo oscuro
         mob = browser.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, locale="es-ES", color_scheme="dark")
         mp = mob.new_page()
@@ -251,7 +311,14 @@ def main():
         mp.wait_for_selector("text=Siguiente ronda")
         if shots:
             mp.screenshot(path=str(shots / "10-movil-oscuro-inicio.png"))
-        mp.click("[data-a=start]")
+        mp.click("[data-a=topic][data-v='2']")
+        if shots:
+            mp.screenshot(path=str(shots / "10b-movil-oscuro-tema.png"))
+        mp.click("[data-a=read][data-v='s02-2']")
+        mp.wait_for_selector(".ap h1")
+        if shots:
+            mp.screenshot(path=str(shots / "10c-movil-oscuro-apuntes.png"), full_page=True)
+        mp.click(".lend [data-a=check]")
         mp.locator("[data-a=pick], [data-a=tf], [data-a=place], [data-a=match]").first.wait_for()
         if shots:
             mp.screenshot(path=str(shots / "11-movil-oscuro-pregunta.png"), full_page=True)

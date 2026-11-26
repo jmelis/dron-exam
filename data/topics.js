@@ -31,6 +31,24 @@ window.QB = {
   }
 };
 
+// Apuntes (teoría) por tema, en data/apuntes/tNN.js. Cada tema se divide en secciones cortas.
+// - `id` de sección ES PERMANENTE («sNN-M»): el progreso guarda qué secciones se han leído.
+// - `pages: [desde, hasta]`: las preguntas del tema cuya página citada cae en ese rango son «de esa sección».
+//   `extra: ["tNN-MM"]` asigna a mano preguntas cuya página cae fuera de todos los rangos.
+// - `blocks`: lista de bloques; cada uno es un objeto con UNA clave de tipo (+ `pg` opcional = página):
+//     { h: "Subtítulo", pg: 19 }      { p: "Párrafo con **negrita**" }      { ul: [...] }   { ol: [...] }
+//     { def: "Término", d: "Definición" }   { kv: [["120 m", "qué es"], ...] }   { tl: [["Año/norma", "texto"], ...] }
+//     { ojo: "Lo que suele caer en el examen" }   { nov: "Novedad de 2024" }   { tip: "Truco para recordarlo" }
+//     { img: "img/p019.webp", alt: "Descripción", pg: 19 }   { cards: [{ t: "A1", rows: [["UAS", "…"], …] }, …] }
+//   La página se hereda: un bloque sin `pg` es de la misma página que el anterior.
+window.AP = {
+  byTopic: {},
+  add: function (topic, sections) {
+    for (var i = 0; i < sections.length; i++) sections[i].t = topic;
+    this.byTopic[topic] = sections;
+  }
+};
+
 // Esquema de una pregunta (ver CLAUDE.md):
 //  mc    { id, type:"mc", q, o:[correcta, d1, d2, d3], w:[null, porQueNoD1, porQueNoD2, porQueNoD3], exp, tip?, p, f?, nov? }
 //  tf    { id, type:"tf", q, a:true|false, exp, p, f?, nov? }

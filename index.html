@@ -63,7 +63,7 @@ p{margin:0}
 .btn.big{min-height:58px;font-size:18px;border-radius:14px;width:100%}
 .btn.ghost{background:transparent}
 .btn:disabled{opacity:.5;cursor:default}
-.back{min-height:44px;padding:0 14px;font-size:15px}
+.back{min-height:44px;padding:0 14px;font-size:15px;white-space:nowrap;flex-shrink:0}
 .icon{width:18px;height:18px;flex-shrink:0}
 .chip{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:14px;font-weight:600;color:var(--ink)}
 button.chip{min-height:44px}
@@ -201,6 +201,7 @@ footer.foot{margin-top:24px;font-size:12px;color:var(--mute);text-align:center;l
 .again{display:flex;align-items:center;justify-content:space-between;min-height:72px;padding:0 24px;border-radius:16px;background:var(--blue);color:#fff;border:none;width:100%;text-align:left}
 .again b{font-size:19px;display:block}
 .again span{font-size:14px;color:#DCE7FD}
+.again:disabled{opacity:.5;cursor:default}
 
 /* simulacro */
 .simgrid{display:grid;gap:24px;grid-template-columns:minmax(0,1fr)}
@@ -243,6 +244,83 @@ textarea{width:100%;min-height:110px;border-radius:12px;border:1px solid var(--l
 .cf b{font-family:var(--head);font-size:18px}
 .cf .pg{color:var(--mute);text-align:right}
 
+/* estudiar: tarjeta de inicio, tema y apuntes (pensado primero para el móvil en vertical) */
+.study{display:flex;flex-direction:column;gap:12px;border:2px solid var(--blue)}
+.study .label{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
+.study h2{font-size:22px;line-height:1.25}
+.study .meta{font-size:14px;color:var(--ink2)}
+.study .btns{display:flex;gap:10px;flex-wrap:wrap}
+.study .btns .btn{flex:1 1 140px}
+.gate{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;line-height:1.45;color:var(--darkmute)}
+.gate button{min-height:36px;padding:0 12px;border-radius:9px;border:1px solid var(--darkline);background:transparent;color:var(--darkink2);font-size:13px;font-weight:600}
+.secrow{display:grid;grid-template-columns:36px minmax(0,1fr);gap:12px;padding:14px 0;border-top:1px solid var(--line2);align-items:start}
+.secrow:first-child{border-top:none}
+.secrow .num{width:36px;height:36px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;background:var(--chip);color:var(--ink2)}
+.secrow .num.done{background:var(--ok);color:#fff}
+.secrow .num.next{background:var(--blue);color:#fff}
+.secrow b{display:block;font-size:16px;line-height:1.3}
+.secrow .meta{font-size:13px;color:var(--ink2);margin-top:3px}
+.secrow .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.secrow .btns .btn{min-height:42px;font-size:15px;padding:0 14px}
+.lesson{max-width:720px;margin:0 auto}
+.ltop{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.ltop .where{flex:1 1 auto;min-width:0;font-size:13px;color:var(--ink2);line-height:1.35}
+.ltop .where b{color:var(--ink);font-weight:600}
+.secbar{display:flex;gap:4px;margin-top:6px}
+.secbar i{flex:1;height:5px;border-radius:3px;background:var(--track)}
+.secbar i.done{background:var(--ok)} .secbar i.cur{background:var(--blue)}
+.ap{font-size:17px;line-height:1.6;color:var(--ink)}
+.ap h1{font-size:27px;line-height:1.22;margin-bottom:8px}
+.ap .lmeta{font-size:14px;color:var(--ink2);margin-bottom:8px}
+.ap h3{font-size:19px;line-height:1.3;margin:30px 0 12px;display:flex;align-items:baseline;gap:10px;scroll-margin-top:16px}
+.ap h3 span{flex:1 1 auto}
+.ap .pg{font-family:Inter,system-ui,sans-serif;font-size:13px;font-weight:600;color:var(--mute);text-decoration:none;white-space:nowrap}
+.ap .pgm{display:flex;align-items:center;gap:10px;margin:18px 0 10px;scroll-margin-top:16px}
+.ap .pgm::before{content:"";flex:1;border-top:1px dashed var(--line)}
+.ap p{margin:0 0 14px}
+.ap b{font-weight:700;color:var(--ink)}
+.ap ul,.ap ol{margin:0 0 16px;padding-left:24px}
+.ap li{margin:7px 0;padding-left:2px}
+.ap .def{margin:0 0 10px;padding:12px 14px;border-radius:12px;background:var(--card);border:1px solid var(--line)}
+.ap .def dt{font-weight:700;color:var(--blued);margin-bottom:3px;line-height:1.35}
+.ap .def dd{margin:0}
+.ap .box{display:flex;gap:12px;margin:0 0 16px;padding:13px 15px;border-radius:12px;line-height:1.5}
+.ap .box .ic{flex-shrink:0;font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding-top:3px}
+.ap .box.ojo{background:var(--kot);color:var(--kod)} .ap .box.ojo b{color:var(--kod)}
+.ap .box.tip{background:var(--tipbg);color:var(--tipink)} .ap .box.tip b{color:var(--tipink)}
+.ap .box.nov{background:var(--amt);color:var(--amd)} .ap .box.nov b{color:var(--amd)}
+.ap .box > div{flex:1 1 auto;min-width:0}
+.ap .box .ic + div{font-size:16px}
+.ap .kv{margin:0 0 16px;border-radius:12px;border:1px solid var(--line);background:var(--card);overflow:hidden}
+.ap .kv div{display:grid;grid-template-columns:minmax(86px,32%) minmax(0,1fr);gap:12px;padding:10px 14px;border-top:1px solid var(--line2);font-size:16px;line-height:1.45}
+.ap .kv div:first-child{border-top:none}
+.ap .kv dt{font-family:var(--head);font-weight:700;color:var(--blued)}
+.ap .kv dd{margin:0}
+.ap .tl{list-style:none;margin:0 0 16px;padding:0 0 0 22px;border-left:3px solid var(--bluet)}
+.ap .tl li{position:relative;margin:0 0 14px}
+.ap .tl li::before{content:"";position:absolute;left:-31px;top:6px;width:13px;height:13px;border-radius:7px;background:var(--blue);border:3px solid var(--bg)}
+.ap .tl li b.t{display:block;font-family:var(--head);color:var(--blued)}
+.ap figure{margin:0 0 16px}
+.ap figure a{display:block}
+.ap figure img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--line)}
+.ap figcaption{font-size:13px;color:var(--mute);margin-top:6px}
+.ap .cards{display:grid;gap:12px;grid-template-columns:minmax(0,1fr);margin:0 0 16px}
+@media (min-width:700px){.ap .cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ap .cards section{border:1px solid var(--line);border-radius:12px;background:var(--card);overflow:hidden}
+.ap .cards h4{margin:0;padding:9px 14px;background:var(--bluet);color:var(--blued);font-family:var(--head);font-size:16px}
+.ap .cards dl{margin:0;padding:4px 14px 10px}
+.ap .cards dt{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);margin-top:8px}
+.ap .cards dd{margin:2px 0 0;font-size:15px;line-height:1.45}
+.ap .flash{animation:flash 2.2s ease-out}
+@keyframes flash{0%,30%{background:var(--amt)}100%{background:transparent}}
+.lend{display:flex;flex-direction:column;gap:12px;margin-top:28px;padding-top:20px;border-top:1px solid var(--line)}
+.lend p{font-size:14px;line-height:1.45;color:var(--ink2)}
+.fab{position:fixed;left:50%;transform:translateX(-50%);bottom:max(16px,env(safe-area-inset-bottom));z-index:40;box-shadow:0 8px 24px rgba(0,0,0,.25);white-space:nowrap}
+.lesson.has-fab{padding-bottom:72px}
+.qlinks{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.qlinks .btn{min-height:40px;font-size:14px;padding:0 14px}
+.conf .th{background:transparent;border:none;padding:0;color:#93B4F8;font-weight:600;font-size:14px;text-decoration:underline}
+
 .dlg-back{position:fixed;inset:0;background:rgba(14,23,38,.6);z-index:60;display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
 .dlg{width:min(540px,100%);max-height:100%;overflow:auto;text-align:left}
 .dlg .opt{border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;align-items:stretch;gap:6px}
@@ -272,6 +350,9 @@ textarea{width:100%;min-height:110px;border-radius:12px;border:1px solid var(--l
 <script src="data/t13.js"></script>
 <script src="data/t14.js"></script>
 <script src="data/t15.js"></script>
+<!-- Apuntes (teoría) por tema. Si añades un fichero a data/apuntes/, añádelo aquí. -->
+<script src="data/apuntes/t01.js"></script>
+<script src="data/apuntes/t02.js"></script>
 
 <script>
 (function () {
@@ -280,8 +361,8 @@ textarea{width:100%;min-height:110px;border-radius:12px;border:1px solid var(--l
 /* =====================================================================
    Constantes
    ===================================================================== */
-var APP_VERSION = "1.1.0";
-var SCHEMA = 1;                       // versión del formato guardado. Si cambia: añadir migración en MIGRATIONS.
+var APP_VERSION = "1.2.0";
+var SCHEMA = 2;                       // versión del formato guardado. Si cambia: añadir migración en MIGRATIONS.
 var NS = "dron-exam:";                // prefijo de TODAS las claves (el dominio jmelis.github.io es compartido)
 var KEY = NS + "state";
 var KEY_SNAPS = NS + "snapshots";
@@ -290,7 +371,7 @@ var INTERVAL = [0, 1, 2, 4, 8, 16];   // rondas hasta que vuelve, por nivel
 var PROB = [0.45, 0.5, 0.65, 0.8, 0.9, 0.96]; // probabilidad estimada de acierto por nivel (0 = sin ver)
 var SIM_N = 40, SIM_MIN = 40, PASS = 30, READY = 34;
 var MODES = { mix: "Mezcla", nuevas: "Nuevas", repaso: "Repaso", fallos: "Fallos" };
-var MODE_LONG = { mix: "Mezcla", nuevas: "Solo nuevas", repaso: "Solo repaso", fallos: "Solo fallos", tema: "Tema", cifras: "Cifras", ids: "Repaso de fallos" };
+var MODE_LONG = { mix: "Mezcla", nuevas: "Solo nuevas", repaso: "Solo repaso", fallos: "Solo fallos", tema: "Tema", cifras: "Cifras", ids: "Repaso de fallos", sec: "Comprobar sección" };
 
 /* =====================================================================
    Datos del banco
@@ -300,6 +381,26 @@ var QMAP = {}; QS.forEach(function (q) { QMAP[q.id] = q; });
 var TMAP = {}; window.TOPICS.forEach(function (t) { TMAP[t.id] = t; });
 var BYT = {}; QS.forEach(function (q) { (BYT[q.t] = BYT[q.t] || []).push(q); });
 var MCQ = QS.filter(function (q) { return q.type === "mc"; });
+
+// Apuntes: secciones en orden de temario y a qué sección pertenece cada pregunta.
+// Una pregunta es de la sección (de su tema) que la lista en `extra` o cuyo rango de páginas contiene su página citada.
+// Si no encaja en ninguna, va a la última sección del tema (así nunca queda oculta para siempre).
+var SECS = [], SECMAP = {}, SEC_OF = {}, SECQ = {};
+window.TOPICS.forEach(function (t) {
+  var list = (window.AP && window.AP.byTopic[t.id]) || [];
+  list.forEach(function (s, i) { s.n = i + 1; s.of = list.length; SECS.push(s); SECMAP[s.id] = s; SECQ[s.id] = []; });
+  (BYT[t.id] || []).forEach(function (q) {
+    if (!list.length) return;
+    var hit = null;
+    list.forEach(function (s) { if (!hit && s.extra && s.extra.indexOf(q.id) >= 0) hit = s; });
+    pagesOf(q).forEach(function (p) { list.forEach(function (s) { if (!hit && p >= s.pages[0] && p <= s.pages[1]) hit = s; }); });
+    hit = hit || list[list.length - 1];
+    SEC_OF[q.id] = hit.id; SECQ[hit.id].push(q);
+  });
+});
+function topicKey(t) { return "t" + String(t).padStart(2, "0"); }
+function hasNotes(t) { return !!(window.AP && window.AP.byTopic[t] && window.AP.byTopic[t].length); }
+function firstPage(t) { return parseInt(String(TMAP[t].pages), 10) || 1; }
 
 var CIFRAS = [
   { name: "Alturas y distancias", facts: ["altura-120", "obstaculo-15", "a2-distancias", "a2-regla11", "a3-150", "pies", "altura-terreno"], rows: [
@@ -367,12 +468,14 @@ var ICON = {
    - Nunca se borran entradas de preguntas desconocidas (IDs retirados conservan su historial).
    ===================================================================== */
 var MIGRATIONS = {
-  // Ejemplo para el futuro:  1: function (s) { /* transformar s */ s.schema = 2; return s; }
+  // 1 → 2 (v1.2.0): se añade `study` = secciones de apuntes leídas { "s01-2": { at, r, n } } (y "t03" = tema estudiado en el PDF).
+  // Solo añade: no toca ni borra nada de lo que ya había.
+  1: function (s) { if (!s.study || typeof s.study !== "object") s.study = {}; s.schema = 2; return s; }
 };
 
 function emptyState() {
   return { schema: SCHEMA, app: "dron-exam", createdAt: nowIso(), updatedAt: nowIso(), ronda: 0,
-           q: {}, sims: [], best: { survival: 0 }, settings: { mode: "mix", len: 12 }, lastBackupRonda: 0, ui: {} };
+           q: {}, sims: [], best: { survival: 0 }, settings: { mode: "mix", len: 12 }, lastBackupRonda: 0, ui: {}, study: {} };
 }
 function validState(s) { return !!s && typeof s === "object" && typeof s.schema === "number" && s.q && typeof s.q === "object" && typeof s.ronda === "number"; }
 function stash(tag, raw) { try { localStorage.setItem(NS + "backup:" + tag + ":" + Date.now(), raw); } catch (e) { /* sin espacio: no bloquear */ } }
@@ -383,6 +486,7 @@ function normalize(s) {
   if (!s.best || typeof s.best !== "object") s.best = d.best;
   if (!Array.isArray(s.sims)) s.sims = [];
   if (!s.ui || typeof s.ui !== "object") s.ui = {};
+  if (!s.study || typeof s.study !== "object") s.study = {};
   return s;
 }
 
@@ -428,6 +532,15 @@ function mergeStates(a, b) {
   r.lastBackupRonda = Math.max(a.lastBackupRonda || 0, b.lastBackupRonda || 0);
   r.settings = a.settings || r.settings;
   r.ui = Object.assign({}, b.ui || {}, a.ui || {});
+  // Secciones leídas: unión; si las dos tienen la misma, gana la lectura más reciente y se queda el mayor número de lecturas.
+  r.study = Object.assign({}, b.study || {});
+  Object.keys(a.study || {}).forEach(function (id) {
+    var x = a.study[id], y = r.study[id];
+    if (!x || typeof x !== "object") return;
+    if (!y || typeof y !== "object") { r.study[id] = x; return; }
+    var w = (x.at || 0) > (y.at || 0) ? x : y;
+    r.study[id] = Object.assign({}, w, { n: Math.max(x.n || 0, y.n || 0) });
+  });
   r.schema = SCHEMA;
   return r;
 }
@@ -451,7 +564,8 @@ function appendPreview(cur, imp) {
   });
   (cur.sims || []).forEach(function (s) { have[String(s.at)] = 1; });
   (imp.sims || []).forEach(function (s) { if (!have[String(s.at)]) sims++; });
-  return { add: add, upd: upd, sims: sims };
+  var secs = Object.keys(imp.study || {}).filter(function (id) { return !(cur.study || {})[id]; }).length;
+  return { add: add, upd: upd, sims: sims, secs: secs };
 }
 
 var Store = {
@@ -543,6 +657,34 @@ function seen(id) { var r = rec(id); return !!(r && r.n > 0); }
 function lvl(id) { var r = rec(id); return r && r.n > 0 ? r.l : 0; }
 function due(id) { var r = rec(id); return !!(r && r.n > 0 && r.d <= RN()); }
 
+/* ---------- Estudio: secciones leídas y qué preguntas nuevas pueden salir ---------- */
+// Una sección cuenta como estudiada si se ha leído (o si el tema entero se marcó como estudiado en el PDF).
+function secRead(sid) { var st = S().study || {}, s = SECMAP[sid]; return !!(st[sid] || (s && st[topicKey(s.t)])); }
+function topicStudied(t) {
+  var st = S().study || {};
+  if (st[topicKey(t)]) return true;
+  var list = hasNotes(t) ? window.AP.byTopic[t] : [];
+  return list.length > 0 && list.every(function (s) { return st[s.id]; });
+}
+function topicReadCount(t) { return (hasNotes(t) ? window.AP.byTopic[t] : []).filter(function (s) { return secRead(s.id); }).length; }
+// ¿Puede salir esta pregunta como NUEVA? Solo si su sección (o su tema) está estudiada, o si está activado «todo el temario».
+function isOpen(q) {
+  if (S().settings.all) return true;
+  var st = S().study || {};
+  if (st[topicKey(q.t)]) return true;
+  var sid = SEC_OF[q.id];
+  return !!(sid && st[sid]);
+}
+function available(q) { return seen(q.id) || isOpen(q); }
+function markRead(key) {
+  var st = S(), e = st.study[key] || { n: 0 };
+  st.study[key] = { at: Date.now(), r: st.ronda, n: (e.n || 0) + 1 };
+  Store.save();
+}
+function nextSection() { for (var i = 0; i < SECS.length; i++) if (!secRead(SECS[i].id)) return SECS[i]; return null; }
+function secAfter(sid) { var i = SECS.indexOf(SECMAP[sid]); return i >= 0 && i + 1 < SECS.length ? SECS[i + 1] : null; }
+function secMastery(sid) { var qs = SECQ[sid] || []; if (!qs.length) return 0; var s = 0; qs.forEach(function (q) { s += lvl(q.id) / 5; }); return Math.round(100 * s / qs.length); }
+
 /* =====================================================================
    Motor de repaso por rondas
    ===================================================================== */
@@ -604,10 +746,11 @@ function predicted() {
   return Math.round(100 * s / MCQ.length);
 }
 function counts() {
-  var c = { unseen: 0, l: [0, 0, 0, 0, 0, 0], due: 0, failed: 0 };
+  var c = { unseen: 0, open: 0, l: [0, 0, 0, 0, 0, 0], due: 0, failed: 0, seen: 0 };
   QS.forEach(function (q) {
     var r = rec(q.id);
-    if (!r || !r.n) { c.unseen++; return; }
+    if (!r || !r.n) { c.unseen++; if (isOpen(q)) c.open++; return; }
+    c.seen++;
     c.l[r.l]++;
     if (r.d <= RN()) c.due++;
     if (r.ko > 0) c.failed++;
@@ -619,7 +762,12 @@ function isReady() { var s = S().sims.slice(-3); return s.length === 3 && s.ever
 function buildRound(o) {
   var len = o.len || 12, R = RN();
   if (o.ids) return shuffle(o.ids).slice(0, len);
-  var pool = QS;
+  if (o.sec) {
+    // Comprobar una sección: todas sus preguntas (primero las nuevas y las que tocan, si hay más de `len`).
+    var rank = function (q) { return !seen(q.id) ? 0 : due(q.id) ? 1 : 2; };
+    return shuffle(shuffle(SECQ[o.sec] || []).sort(function (a, b) { return rank(a) - rank(b); }).slice(0, len).map(function (q) { return q.id; }));
+  }
+  var pool = QS.filter(available);
   if (o.topic) pool = pool.filter(function (q) { return q.t === o.topic; });
   if (o.facts) pool = pool.filter(function (q) { return q.f && o.facts.indexOf(q.f) >= 0; });
   var seenQ = pool.filter(function (q) { return seen(q.id); });
@@ -659,6 +807,7 @@ function buildSim() {
    Estado de la interfaz
    ===================================================================== */
 var view = "home", ses = null, simTimer = null, simRes = null, toastTimer = null;
+var curTopic = null, curSec = null, lessonFrom = "home";
 var app = document.getElementById("app");
 
 function toast(msg) {
@@ -673,7 +822,7 @@ function go(v) { view = v; render(); window.scrollTo(0, 0); }
 function startRound(o) {
   var ids = buildRound(o);
   if (!ids.length) {
-    toast(o.mode === "fallos" ? "Todavía no has fallado ninguna pregunta." : "No hay preguntas para esa ronda.");
+    toast(o.mode === "fallos" ? "Todavía no has fallado ninguna pregunta." : (o.ids || o.sec || S().settings.all) ? "No hay preguntas para esa ronda." : "Aún no hay preguntas: estudia primero alguna sección de los apuntes.");
     return;
   }
   ses = { kind: "round", o: o, queue: ids.map(function (id) { return { id: id, rep: false }; }), i: 0,
@@ -681,14 +830,17 @@ function startRound(o) {
           before: masteryMap(), counted: false, t0: Date.now() };
   prep(); go("q");
 }
+function survivalPool() { return MCQ.filter(available); }
 function startSurvival() {
+  if (!survivalPool().length) { toast("Primero estudia alguna sección: Supervivencia solo usa lo que has estudiado."); return; }
   ses = { kind: "surv", lives: 3, count: 0, good: 0, used: {}, queue: [], i: 0, first: 0, before: masteryMap(), counted: false };
   ses.queue.push({ id: pickSurvival(), rep: false });
   prep(); go("q");
 }
 function pickSurvival() {
-  var c = MCQ.filter(function (q) { return !ses.used[q.id]; });
-  if (!c.length) { ses.used = {}; c = MCQ.slice(); }
+  var all = survivalPool();
+  var c = all.filter(function (q) { return !ses.used[q.id]; });
+  if (!c.length) { ses.used = {}; c = all.slice(); }
   var w = c.map(function (q) { return (!seen(q.id) || due(q.id) || lvl(q.id) <= 2) ? 3 : 1; });
   var tot = w.reduce(function (a, b) { return a + b; }, 0), x = Math.random() * tot;
   for (var i = 0; i < c.length; i++) { x -= w[i]; if (x <= 0) { ses.used[c[i].id] = 1; return c[i].id; } }
@@ -842,7 +994,8 @@ var pendingImport = null;
 function seenCount(st) { return Object.keys(st.q).filter(function (id) { return st.q[id] && st.q[id].n > 0; }).length; }
 function summary(st) {
   var n = (st.sims || []).length;
-  return st.ronda + plural(st.ronda, " ronda", " rondas") + " · " + seenCount(st) + " preguntas vistas · " + n + plural(n, " simulacro", " simulacros");
+  var k = Object.keys(st.study || {}).length;
+  return st.ronda + plural(st.ronda, " ronda", " rondas") + " · " + seenCount(st) + " preguntas vistas · " + n + plural(n, " simulacro", " simulacros") + " · " + k + plural(k, " sección estudiada", " secciones estudiadas");
 }
 function closeImportDialog() { var d = document.querySelector(".dlg-back"); if (d) d.remove(); pendingImport = null; }
 function showImportDialog() {
@@ -851,7 +1004,7 @@ function showImportDialog() {
   var appendOpt = Store.readOnly
     ? '<div class="opt"><b>Añadir a mi progreso</b><p class="muted">No disponible: tu progreso actual es de una versión más nueva de la app. Recarga la página para actualizarla.</p></div>'
     : '<div class="opt rec"><b>Añadir a mi progreso</b><p class="muted">Une la copia con lo que ya tienes. De cada pregunta se queda la respuesta más reciente y no se pierde nada. Se puede repetir sin problema.</p>' +
-      '<p><b>' + pv.add + "</b> preguntas nuevas · <b>" + pv.upd + "</b> con respuesta más reciente en la copia · <b>" + pv.sims + "</b> " + plural(pv.sims, "simulacro nuevo", "simulacros nuevos") + '</p><button class="btn primary" data-a="impAppend">Añadir</button></div>';
+      '<p><b>' + pv.add + "</b> preguntas nuevas · <b>" + pv.upd + "</b> con respuesta más reciente en la copia · <b>" + pv.sims + "</b> " + plural(pv.sims, "simulacro nuevo", "simulacros nuevos") + " · <b>" + pv.secs + "</b> " + plural(pv.secs, "sección estudiada nueva", "secciones estudiadas nuevas") + '</p><button class="btn primary" data-a="impAppend">Añadir</button></div>';
   var el = document.createElement("div");
   el.className = "dlg-back"; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true");
   el.innerHTML = '<div class="dlg card stack" style="gap:12px"><h2 style="font-size:20px">Importar copia</h2>' +
@@ -866,7 +1019,7 @@ function runImport(mode) {
   if (mode === "append") {
     var pv = appendPreview(S(), s);
     Store.absorb(s, "before-import-append");
-    toast(pv.add || pv.upd || pv.sims ? "Copia añadida: " + pv.add + plural(pv.add, " pregunta nueva, ", " preguntas nuevas, ") + pv.upd + " actualizadas." : "La copia no aportaba nada nuevo.");
+    toast(pv.add || pv.upd || pv.sims || pv.secs ? "Copia añadida: " + pv.add + plural(pv.add, " pregunta nueva, ", " preguntas nuevas, ") + pv.upd + " actualizadas." : "La copia no aportaba nada nuevo.");
   } else {
     stash("before-import", JSON.stringify(S()));
     Store.replace(s, "replaced-by-import");
@@ -894,6 +1047,8 @@ function render() {
   else if (view === "simres") html = vSimRes();
   else if (view === "progress") html = vProgress();
   else if (view === "cifras") html = vCifras();
+  else if (view === "topic") html = vTopic();
+  else if (view === "lesson") html = vLesson();
   app.innerHTML = html;
 }
 function backBtn(label, action) { return '<button class="btn back" data-a="' + (action || "home") + '">' + ICON.back + esc(label || "Inicio") + "</button>"; }
@@ -916,26 +1071,28 @@ function banners() {
 function vHome() {
   var st = S(), c = counts(), m = st.settings.mode || "mix", len = st.settings.len || 12, p = predicted(), dom = c.l[5];
   var dueN = c.due, sumTxt;
-  if (m === "mix") sumTxt = dueN ? dueN + plural(dueN, " te toca", " te tocan") + (c.unseen ? " · el resto, nuevas" : "") : (c.unseen ? "Nada pendiente: todas nuevas" : "Todo repaso");
-  else if (m === "nuevas") sumTxt = c.unseen + " sin ver";
+  if (m === "mix") sumTxt = dueN ? dueN + plural(dueN, " te toca", " te tocan") + (c.open ? " · el resto, nuevas" : "") : (c.open ? "Nada pendiente: todas nuevas" : (c.seen ? "Todo repaso" : "Primero, estudia una sección"));
+  else if (m === "nuevas") sumTxt = c.open + (st.settings.all ? " sin ver" : " nuevas de lo estudiado");
   else if (m === "repaso") sumTxt = dueN + plural(dueN, " te toca", " te tocan") + " ahora";
   else sumTxt = c.failed + plural(c.failed, " pregunta fallada", " preguntas falladas");
   var seg = Object.keys(MODES).map(function (k) { return '<button data-a="mode" data-v="' + k + '" aria-pressed="' + (k === m) + '">' + MODES[k] + "</button>"; }).join("");
   var lens = [6, 12, 20].map(function (n) { return '<button data-a="len" data-v="' + n + '" aria-pressed="' + (n === len) + '">' + n + "</button>"; }).join("");
   var topics = window.TOPICS.map(function (t) {
-    var pm = topicMastery(t.id);
-    return '<button class="trow" data-a="topic" data-v="' + t.id + '"><span class="n">' + esc(t.name) + ' <small>· p. ' + esc(t.pages) + "</small>" + (t.nov ? ' <span class="nov">NOVEDAD</span>' : "") + "</span>" + bar(pm, lvClass(pm)) + '<span class="pct">' + pm + "%</span></button>";
+    var pm = topicMastery(t.id), done = topicStudied(t.id);
+    var stTxt = hasNotes(t.id) ? " · " + topicReadCount(t.id) + "/" + window.AP.byTopic[t.id].length + " secciones" : (done ? " · estudiado" : "");
+    return '<button class="trow" data-a="topic" data-v="' + t.id + '"><span class="n">' + (done ? '<span style="color:var(--ok)">✓</span> ' : "") + esc(t.name) + ' <small>· p. ' + esc(t.pages) + esc(stTxt) + "</small>" + (t.nov ? ' <span class="nov">NOVEDAD</span>' : "") + "</span>" + bar(pm, lvClass(pm)) + '<span class="pct">' + pm + "%</span></button>";
   }).join("");
   var ready = isReady();
   return '<header class="top"><div class="brand"><div class="logo">' + ICON.logo + '</div><div><h1>Piloto A1/A3</h1><p>Temario AESA de julio de 2024 · examen: 40 preguntas, 40 min, aprobado con 30</p></div></div>' +
     '<div class="row wrap"><button class="chip" data-a="progress">' + ICON.layers + st.ronda + plural(st.ronda, " ronda hecha", " rondas hechas") + '</button><button class="chip" data-a="progress">' + ICON.target + "Dominas " + dom + " de " + QS.length + "</button></div></header>" +
     banners() +
-    '<div class="home"><div class="stack">' +
+    '<div class="home"><div class="stack">' + studyCard() +
       '<section class="card next"><div class="row"><span class="label">Siguiente ronda</span><span class="grow"></span><span class="small" style="color:var(--darkmute)">' + esc(sumTxt) + "</span></div>" +
         '<div class="seg" role="group" aria-label="Tipo de ronda">' + seg + "</div>" +
         '<div class="row"><span class="small" style="color:var(--darkink2);font-size:14px">Preguntas por ronda</span><div class="lens" role="group" aria-label="Preguntas por ronda">' + lens + "</div></div>" +
         '<button class="go" data-a="start">Empezar ronda · ~' + Math.max(2, Math.round(len * 0.4)) + " min " + ICON.arrow + "</button>" +
-        '<p class="foot">Haz las rondas que quieras, cuando quieras. Sin límite de nuevas. Si fallas una, vuelve en la misma ronda.</p></section>' +
+        '<div class="gate"><span class="grow">' + (st.settings.all ? "Preguntas nuevas: de <b>todo el temario</b>, aunque no lo hayas estudiado." : "Preguntas nuevas: solo de lo que has estudiado (" + c.open + plural(c.open, " disponible", " disponibles") + ").") + '</span><button data-a="toggleAll">' + (st.settings.all ? "Solo lo estudiado" : "Todo el temario") + "</button></div>" +
+        '<p class="foot">Haz las rondas que quieras, cuando quieras. Si fallas una, vuelve en la misma ronda.</p></section>' +
       '<section class="card stack" style="gap:10px"><div class="row"><span class="grow" style="font-weight:600">Nota estimada si te examinas hoy</span><span class="big" style="font-size:28px;color:var(--blue)">' + p + ' %</span></div>' +
         '<div class="scorebar"><i style="width:' + p + '%"></i><b style="left:75%"></b><b class="t" style="left:85%"></b></div>' +
         '<div class="row small muted"><span class="grow">Aprobado: 75 % (30/40)</span><span style="color:var(--ok);font-weight:600">' + (ready ? "Listo para el examen" : "Para ir tranquilo: 85 %") + "</span></div></section>" +
@@ -947,7 +1104,7 @@ function vHome() {
       "</div>" +
       '<button class="btn" data-a="progress">Ver progreso y copias de seguridad</button>' +
     "</div>" +
-    '<section class="card topics"><div class="row wrap" style="justify-content:space-between;padding-bottom:8px"><h2>Temas <span class="small muted" style="font-family:Inter,sans-serif;font-weight:400">· toca uno para una ronda solo de ese tema</span></h2><span class="nov" style="font-size:12px;padding:3px 7px">NOVEDAD = cambió desde la última vez</span></div>' + topics + "</section>" +
+    '<section class="card topics"><div class="row wrap" style="justify-content:space-between;padding-bottom:8px"><h2>Temas <span class="small muted" style="font-family:Inter,sans-serif;font-weight:400">· toca uno para ver sus apuntes y practicarlo</span></h2><span class="nov" style="font-size:12px;padding:3px 7px">NOVEDAD = cambió desde la última vez</span></div>' + topics + "</section>" +
     "</div>" +
     '<footer class="foot">Versión ' + APP_VERSION + " · " + QS.length + " preguntas · Tu progreso se guarda solo en este dispositivo y navegador.<br>Páginas del temario oficial AESA FOR-UAS-P01-DT01 Ed.09 (julio 2024). No es una app oficial de AESA.</footer>";
 }
@@ -960,7 +1117,7 @@ function headerFor(q, it) {
     extra = '<span aria-label="Vidas: ' + ses.lives + '" style="letter-spacing:2px;color:var(--ko);font-weight:700">' + hearts + "</span>";
     return '<header class="qtop">' + backBtn("Salir", "quit") + '<div class="prog"><div class="t"><span><strong>' + label + "</strong> · " + pos + "</span>" + extra + "</div></div></header>";
   }
-  var o = ses.o, name = o.mode === "tema" ? "Tema " + o.topic : (MODE_LONG[o.mode] || "Ronda");
+  var o = ses.o, name = o.mode === "tema" ? "Tema " + o.topic : o.mode === "sec" && SECMAP[o.sec] ? "Tema " + SECMAP[o.sec].t + " · sección " + SECMAP[o.sec].n : (MODE_LONG[o.mode] || "Ronda");
   var total = ses.queue.filter(function (x) { return !x.rep; }).length;
   var n = ses.queue.slice(0, ses.i + 1).filter(function (x) { return !x.rep; }).length;
   var posTxt = it.rep ? "repetición (llevas " + n + " de " + total + ")" : "pregunta " + n + " de " + total;
@@ -1030,14 +1187,15 @@ function answerArea(q, it) {
   }
   return out;
 }
-function srcLine(q) { return '<div class="src">' + ICON.doc + "<span>Temario: <strong>" + pageLinks(q) + "</strong> (" + esc(TMAP[q.t].name) + ")</span></div>"; }
+function srcLine(q) { return '<div class="src">' + ICON.doc + "<span>Temario: <strong>" + pageLinks(q) + "</strong> (" + esc(TMAP[q.t].name) + ")</span>" +
+  (SEC_OF[q.id] ? '<button class="btn" style="min-height:40px;font-size:14px;padding:0 14px" data-a="theory" data-v="' + q.id + '">Ver teoría</button>' : "") + "</div>"; }
 function feedback(q, it) {
   var ph = ses.phase;
   if (ph === "ask") return "";
   if (ph === "conf") {
     return '<section class="conf"><div class="h"><b>¡Bien! ¿Lo sabías o has dudado?</b><span>Sé sincero: decide cuándo vuelve</span></div>' +
       '<div class="two"><button data-a="sure"><b>Lo sabía</b><span>' + esc(preview(it.id, "sure")) + '</span></button><button data-a="doubt"><b>Dudé</b><span>' + esc(preview(it.id, "doubt")) + "</span></button></div>" +
-      "<p><strong>Por qué:</strong> " + esc(q.exp) + " · " + pageLinks(q) + "</p></section>";
+      "<p><strong>Por qué:</strong> " + esc(q.exp) + " · " + pageLinks(q) + (SEC_OF[q.id] ? ' · <button class="th" data-a="theory" data-v="' + q.id + '">Ver teoría</button>' : "") + "</p></section>";
   }
   if (ph === "right") {
     var msg = ses.kind === "surv" ? "¡Bien!" : (it.rep ? "¡Ahora sí! Vuelve en la próxima ronda." : "¡Perfecto!");
@@ -1076,9 +1234,9 @@ function vEnd() {
     '<div class="stat b"><b>' + ses.news + plural(ses.news, " nueva", " nuevas") + '</b><span>vistas por primera vez</span></div><div class="stat r"><b>' + failed.length + plural(failed.length, " fallada", " falladas") + "</b><span>vuelven en la próxima ronda</span></div></div>" +
     (moved.length ? '<div><p style="font-weight:700;margin-bottom:4px">Lo que has movido</p>' + moved.map(function (x) { return '<div class="moved"><span>' + esc(x.t.name) + '</span><b style="color:' + (x.b >= x.a ? "var(--ok)" : "var(--ko)") + '">' + x.a + " % → " + x.b + " %</b></div>"; }).join("") + "</div>" : "") +
     "</section>" +
-    '<section class="stack"><h2>¿Otra?</h2><button class="again" data-a="again"><span><b>Otra ronda igual</b><span>' + esc(MODE_LONG[ses.o.mode] || "") + " · " + (ses.o.len || 12) + " preguntas · " + c.due + plural(c.due, " te toca", " te tocan") + "</span></span>" + ICON.arrow + "</button>" +
+    '<section class="stack"><h2>¿Otra?</h2>' + endNext() + '<button class="' + (ses.o.sec ? "btn big" : "again") + '" data-a="again">' + (ses.o.sec ? "Repetir esta sección" : "<span><b>Otra ronda igual</b><span>" + esc(MODE_LONG[ses.o.mode] || "") + " · " + (ses.o.len || 12) + " preguntas · " + c.due + plural(c.due, " te toca", " te tocan") + "</span></span>" + ICON.arrow) + "</button>" +
     '<div class="modes">' + (failed.length ? '<button class="mode" data-a="fixFailed"><b>Remata ' + plural(failed.length, "la fallada", "las " + failed.length + " falladas") + "</b><span>" + (failed.length <= 3 ? "Menos de un minuto" : "Unos " + Math.max(1, Math.round(failed.length * 0.4)) + " min") + "</span></button>" : "") +
-    '<button class="mode" data-a="onlyNew"><b>Solo nuevas</b><span>Te quedan ' + c.unseen + " sin ver</span></button>" +
+    '<button class="mode" data-a="onlyNew"><b>Solo nuevas</b><span>' + c.open + plural(c.open, " disponible", " disponibles") + " sin ver</span></button>" +
     '<button class="mode" data-a="survival"><b>Supervivencia</b><span>Hasta el 3.er fallo · récord: ' + (S().best.survival || 0) + "</span></button>" +
     '<button class="mode" data-a="sim"><b>Simulacro</b><span>40 preguntas · 40 min</span></button></div>' +
     '<div class="card row wrap"><p class="grow muted" style="min-width:200px">Si paras aquí no pierdes nada: lo pendiente te espera en la próxima ronda, sea mañana o dentro de un mes.</p><button class="btn" data-a="home">Parar por hoy</button></div></section></div>';
@@ -1120,7 +1278,8 @@ function vSimRes() {
     var q = QMAP[r.ids[i]], a = r.ans[i];
     return '<div class="card stack" style="gap:8px"><p style="font-weight:600">' + (i + 1) + ". " + esc(q.q) + "</p>" +
       (a == null ? '<p style="color:var(--ko)">Sin responder</p>' : '<p style="color:var(--ko)"><b>Tu respuesta:</b> ' + esc(q.o[a]) + " — " + esc(q.w[a]) + "</p>") +
-      '<p style="color:var(--ok)"><b>Correcta:</b> ' + esc(q.o[0]) + "</p><p class=\"muted\">" + esc(q.exp) + " · " + pageLinks(q) + "</p></div>";
+      '<p style="color:var(--ok)"><b>Correcta:</b> ' + esc(q.o[0]) + "</p><p class=\"muted\">" + esc(q.exp) + " · " + pageLinks(q) + "</p>" +
+      (SEC_OF[q.id] ? '<div class="qlinks"><button class="btn" data-a="theory" data-v="' + q.id + '">Ver teoría</button></div>' : "") + "</div>";
   }).join("");
   var sheet = r.ids.map(function (id, k) { return '<button class="' + (r.ans[k] === 0 ? "ok" : "ko") + '" disabled>' + (k + 1) + "</button>"; }).join("");
   return '<header class="top"><div><h1 style="font-size:30px">Resultado del simulacro</h1><p class="muted" style="margin-top:4px">' + (r.auto ? "Se acabó el tiempo. " : "") + "Los fallos ya están en tu repaso.</p></div>" + backBtn("Inicio", "home") + "</header>" +
@@ -1147,7 +1306,8 @@ function vProgress() {
   var best = st.sims.reduce(function (m, s) { return Math.max(m, s.score); }, 0);
   var topics = window.TOPICS.map(function (t) {
     var qs = BYT[t.id] || [], seenN = qs.filter(function (q) { return seen(q.id); }).length, pm = topicMastery(t.id);
-    return "<tr><td>" + esc(t.name) + (t.nov ? ' <span class="nov">NOVEDAD</span>' : "") + '</td><td class="muted">p. ' + esc(t.pages) + "</td><td>" + seenN + "/" + qs.length + '</td><td style="width:26%">' + bar(pm, lvClass(pm)) + "</td><td><b>" + pm + "%</b></td></tr>";
+    var studyTxt = hasNotes(t.id) ? topicReadCount(t.id) + "/" + window.AP.byTopic[t.id].length : (topicStudied(t.id) ? "✓" : "—");
+    return "<tr><td>" + esc(t.name) + (t.nov ? ' <span class="nov">NOVEDAD</span>' : "") + '</td><td class="muted">p. ' + esc(t.pages) + "</td><td>" + studyTxt + "</td><td>" + seenN + "/" + qs.length + '</td><td style="width:26%">' + bar(pm, lvClass(pm)) + "</td><td><b>" + pm + "%</b></td></tr>";
   }).join("");
   var snapHtml = snaps.length ? snaps.map(function (s, i) { return '<div class="row" style="border-top:1px solid var(--line2);padding-top:8px"><span class="grow small">Ronda ' + s.ronda + " · " + new Date(s.at).toLocaleString("es-ES") + '</span><button class="btn" style="min-height:40px;font-size:14px" data-a="snap" data-v="' + i + '">Restaurar</button></div>'; }).reverse().join("") : '<p class="small muted">Se crea una cada 5 rondas (se guardan las 3 últimas).</p>';
   var lastB = st.ui.lastBackupAt ? "Última copia: ronda " + st.lastBackupRonda + " (" + new Date(st.ui.lastBackupAt).toLocaleDateString("es-ES") + ")" : "Todavía no has guardado ninguna copia.";
@@ -1162,7 +1322,7 @@ function vProgress() {
     '<textarea id="codebox" placeholder="…o pega aquí el texto de una copia y pulsa «Importar texto»"></textarea><button class="btn" data-a="paste">Importar texto</button>' +
     '<p class="small muted">' + esc(lastB) + "</p><h3 style=\"font-size:15px;margin-top:6px\">Copias automáticas</h3>" + snapHtml +
     '<p class="small muted">Almacenamiento persistente: ' + (Store.persisted === true ? "sí" : Store.persisted === false ? "no concedido" : "desconocido") + " · Versión " + APP_VERSION + " · formato " + SCHEMA + "</p></section></div>" +
-    '<section class="card"><h2 style="font-size:18px;margin-bottom:6px">Por temas</h2><table class="tbl"><tr><th>Tema</th><th>Páginas</th><th>Vistas</th><th>Dominio</th><th></th></tr>' + topics + "</table></section></div>";
+    '<section class="card"><h2 style="font-size:18px;margin-bottom:6px">Por temas</h2><table class="tbl"><tr><th>Tema</th><th>Páginas</th><th>Estudio</th><th>Vistas</th><th>Dominio</th><th></th></tr>' + topics + "</table></section></div>";
 }
 function vCifras() {
   var cards = CIFRAS.map(function (c, i) {
@@ -1171,6 +1331,102 @@ function vCifras() {
       c.rows.map(function (r) { return '<div class="cf"><b>' + esc(r[0]) + "</b><span>" + esc(r[1]) + '</span><a class="pg" href="' + PDF_URL + "#page=" + r[2] + '" target="_blank" rel="noopener">p. ' + r[2] + "</a></div>"; }).join("") + "</section>";
   }).join("");
   return '<header class="qtop">' + backBtn() + '<div class="grow"><h1 style="font-size:24px">Chuleta de cifras</h1><p class="small muted">Los números son lo que más se confunde. «Practicar» hace una ronda solo con esas cifras.</p></div></header><div class="cifras">' + cards + "</div>";
+}
+
+/* ---------- Estudiar: apuntes por secciones ---------- */
+function fmt(s) { return esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>"); }
+function pdfLink(p) { return '<a class="pg" href="' + PDF_URL + "#page=" + p + '" target="_blank" rel="noopener">p. ' + p + "</a>"; }
+function textOf(x) {
+  if (typeof x === "string") return x;
+  if (Array.isArray(x)) return x.map(textOf).join(" ");
+  if (x && typeof x === "object") return Object.keys(x).filter(function (k) { return k !== "img" && k !== "pg"; }).map(function (k) { return textOf(x[k]); }).join(" ");
+  return "";
+}
+function readMins(sec) { return Math.max(1, Math.round(textOf(sec.blocks).split(/\s+/).length / 130)); } // lectura de estudio: ~130 palabras/min
+function secPages(sec) { return sec.pages[0] === sec.pages[1] ? "p. " + sec.pages[0] : "p. " + sec.pages[0] + "–" + sec.pages[1]; }
+function nq(n) { return n + plural(n, " pregunta", " preguntas"); }
+function renderBlocks(sec) {
+  var page = sec.pages[0], marked = {}, out = "";
+  sec.blocks.forEach(function (b) {
+    var pg = b.pg || page; page = pg;
+    var anchor = marked[pg] ? "" : ' id="ap-p' + pg + '"';
+    if (b.h != null) { out += "<h3" + anchor + "><span>" + fmt(b.h) + "</span>" + pdfLink(pg) + "</h3>"; marked[pg] = 1; return; }
+    if (!marked[pg]) { out += '<div class="pgm"' + anchor + ">" + pdfLink(pg) + "</div>"; marked[pg] = 1; }
+    if (b.p != null) out += "<p>" + fmt(b.p) + "</p>";
+    else if (b.ul || b.ol) { var tag = b.ul ? "ul" : "ol"; out += "<" + tag + ">" + (b.ul || b.ol).map(function (x) { return "<li>" + fmt(x) + "</li>"; }).join("") + "</" + tag + ">"; }
+    else if (b.def != null) out += '<dl class="def"><dt>' + fmt(b.def) + "</dt><dd>" + fmt(b.d) + "</dd></dl>";
+    else if (b.kv) out += '<dl class="kv">' + b.kv.map(function (r) { return "<div><dt>" + fmt(r[0]) + "</dt><dd>" + fmt(r[1]) + "</dd></div>"; }).join("") + "</dl>";
+    else if (b.tl) out += '<ol class="tl">' + b.tl.map(function (r) { return '<li><b class="t">' + fmt(r[0]) + "</b>" + fmt(r[1]) + "</li>"; }).join("") + "</ol>";
+    else if (b.ojo != null) out += '<div class="box ojo"><span class="ic">Ojo</span><div>' + fmt(b.ojo) + "</div></div>";
+    else if (b.tip != null) out += '<div class="box tip"><span class="ic">Truco</span><div>' + fmt(b.tip) + "</div></div>";
+    else if (b.nov != null) out += '<div class="box nov"><span class="ic">Novedad</span><div>' + fmt(b.nov) + "</div></div>";
+    else if (b.img) out += '<figure><a href="' + esc(b.img) + '" target="_blank" rel="noopener"><img src="' + esc(b.img) + '" alt="' + esc(b.alt || "") + '" loading="lazy"></a><figcaption>Toca la imagen para verla en grande · temario p. ' + pg + "</figcaption></figure>";
+    else if (b.cards) out += '<div class="cards">' + b.cards.map(function (c) {
+      return "<section><h4>" + fmt(c.t) + "</h4><dl>" + c.rows.map(function (r) { return "<dt>" + fmt(r[0]) + "</dt><dd>" + fmt(r[1]) + "</dd>"; }).join("") + "</dl></section>";
+    }).join("") + "</div>";
+  });
+  return out;
+}
+function openLesson(sid, from, pg) {
+  if (!SECMAP[sid]) return;
+  curSec = sid; lessonFrom = from; curTopic = SECMAP[sid].t;
+  go("lesson");
+  var el = pg && document.getElementById("ap-p" + pg);
+  if (el) { el.scrollIntoView({ block: "start" }); el.classList.add("flash"); }
+}
+function studyCard() {
+  var nx = nextSection(), readN = SECS.filter(function (s) { return secRead(s.id); }).length;
+  var topicsDone = window.TOPICS.filter(function (t) { return topicStudied(t.id); }).length;
+  var foot = '<p class="meta">' + readN + " de " + SECS.length + " secciones de apuntes estudiadas · " + topicsDone + " de " + window.TOPICS.length + " temas</p>";
+  if (nx) {
+    return '<section class="card study"><span class="label">Estudiar</span><div><p class="meta">Tema ' + nx.t + " · " + esc(TMAP[nx.t].name) + " · sección " + nx.n + " de " + nx.of + "</p><h2>" + esc(nx.title) + '</h2><p class="meta">' + secPages(nx) + " · ≈ " + readMins(nx) + " min de lectura · " + nq(SECQ[nx.id].length) + "</p></div>" +
+      '<div class="btns"><button class="btn primary big" data-a="read" data-v="' + nx.id + '">Leer ahora ' + ICON.arrow + "</button></div>" + foot + "</section>";
+  }
+  var nt = window.TOPICS.filter(function (t) { return !topicStudied(t.id); })[0];
+  if (nt) return '<section class="card study"><span class="label">Estudiar</span><div><p class="meta">Tema ' + nt.id + " · apuntes en preparación</p><h2>" + esc(nt.name) + '</h2><p class="meta">Estúdialo en el PDF (p. ' + esc(nt.pages) + ") y márcalo como estudiado.</p></div>" +
+    '<div class="btns"><button class="btn primary big" data-a="topic" data-v="' + nt.id + '">Abrir el tema ' + ICON.arrow + "</button></div>" + foot + "</section>";
+  return '<section class="card study"><span class="label">Estudiar</span><h2>Has estudiado todo el temario</h2><p class="meta">Ahora toca repasar: rondas, supervivencia y simulacros.</p></section>';
+}
+function vTopic() {
+  var t = TMAP[curTopic], qs = BYT[t.id] || [], pm = topicMastery(t.id);
+  var seenN = qs.filter(function (q) { return seen(q.id); }).length, avail = qs.filter(available).length, body;
+  if (hasNotes(t.id)) {
+    var nx = nextSection();
+    body = '<section class="card">' + window.AP.byTopic[t.id].map(function (s) {
+      var done = secRead(s.id), n = SECQ[s.id].length, sv = SECQ[s.id].filter(function (q) { return seen(q.id); }).length;
+      return '<div class="secrow"><span class="num' + (done ? " done" : nx && nx.id === s.id ? " next" : "") + '">' + (done ? "✓" : s.n) + "</span><div><b>" + esc(s.title) + '</b><div class="meta">' + secPages(s) + " · ≈ " + readMins(s) + " min · " + nq(n) + (sv ? " · dominio " + secMastery(s.id) + " %" : "") + "</div>" +
+        '<div class="btns"><button class="btn' + (done ? "" : " primary") + '" data-a="read" data-v="' + s.id + '">' + (done ? "Releer" : "Leer") + "</button>" + (n ? '<button class="btn" data-a="check" data-v="' + s.id + '">Comprobar</button>' : "") + "</div></div></div>";
+    }).join("") + "</section>";
+  } else {
+    var marked = !!S().study[topicKey(t.id)];
+    body = '<section class="card stack" style="gap:12px"><b>Los apuntes de este tema aún no están en la app.</b><p class="muted">Mientras tanto, estúdialo en el PDF oficial (p. ' + esc(t.pages) + ") y márcalo como estudiado para que sus preguntas empiecen a salir en tus rondas.</p>" +
+      '<div class="row wrap"><a class="btn" href="' + PDF_URL + "#page=" + firstPage(t.id) + '" target="_blank" rel="noopener">' + ICON.doc + "Abrir el PDF en la p. " + firstPage(t.id) + "</a>" +
+      (marked ? '<span style="color:var(--ok);font-weight:600">✓ Marcado como estudiado</span>' : '<button class="btn primary" data-a="markTopic" data-v="' + t.id + '">Ya lo he estudiado</button>') + "</div></section>";
+  }
+  var roundBtn = '<button class="again" data-a="topicRound" data-v="' + t.id + '"' + (avail ? "" : " disabled") + "><span><b>Ronda de este tema</b><span>" + (avail ? avail + " de " + qs.length + " preguntas disponibles" : hasNotes(t.id) ? "Estudia una sección para desbloquear sus preguntas" : "Márcalo como estudiado para desbloquear sus preguntas") + "</span></span>" + ICON.arrow + "</button>";
+  return '<header class="qtop">' + backBtn() + '<div class="grow"><h1 style="font-size:22px;line-height:1.25">' + esc(t.name) + (t.nov ? ' <span class="nov">NOVEDAD</span>' : "") + '</h1><p class="small muted" style="margin-top:4px">Tema ' + t.id + " · p. " + esc(t.pages) + " · " + seenN + " de " + qs.length + " preguntas vistas · dominio " + pm + " %</p></div></header>" +
+    '<div class="stack" style="max-width:760px;margin:0 auto">' + body + roundBtn + "</div>";
+}
+function vLesson() {
+  var sec = SECMAP[curSec], t = TMAP[sec.t], list = window.AP.byTopic[sec.t];
+  var qn = (SECQ[sec.id] || []).length, nxt = secAfter(sec.id);
+  var backLbl = lessonFrom === "q" ? "Pregunta" : lessonFrom === "simres" ? "Resultado" : lessonFrom === "home" ? "Inicio" : "Tema " + sec.t;
+  var bars = '<div class="secbar">' + list.map(function (s) { return '<i class="' + (s.id === sec.id ? "cur" : secRead(s.id) ? "done" : "") + '"></i>'; }).join("") + "</div>";
+  var head = '<header class="ltop">' + backBtn(backLbl, "lessonBack") + '<div class="where"><b>Tema ' + sec.t + " · " + esc(t.name) + "</b><br>Sección " + sec.n + " de " + sec.of + bars + "</div></header>";
+  var meta = "≈ " + readMins(sec) + " min · " + secPages(sec) + " del temario · " + nq(qn) + (secRead(sec.id) ? ' · <span style="color:var(--ok);font-weight:600">✓ estudiada</span>' : "");
+  var end;
+  var fromQ = lessonFrom === "q" || lessonFrom === "simres";
+  if (fromQ) end = '<button class="btn primary fab" data-a="lessonBack">' + ICON.back + (lessonFrom === "q" ? "Volver a la pregunta" : "Volver al resultado") + "</button>";
+  else end = '<div class="lend">' + (qn ? '<button class="btn primary big" data-a="check" data-v="' + sec.id + '">Comprobar esta sección · ' + nq(qn) + "</button>" : "") +
+    (nxt ? '<button class="btn big" data-a="nextSec" data-v="' + sec.id + '">Siguiente' + (nxt.t !== sec.t ? " (tema " + nxt.t + ")" : "") + ": " + esc(nxt.title) + "</button>" : '<button class="btn big" data-a="nextSec" data-v="' + sec.id + '">Terminar el tema</button>') +
+    "<p>Al comprobar o pasar a la siguiente, esta sección queda como estudiada y sus preguntas empiezan a salir en tus rondas.</p></div>";
+  return '<div class="lesson' + (fromQ ? " has-fab" : "") + '">' + head + '<article class="ap"><h1>' + esc(sec.title) + '</h1><p class="lmeta">' + meta + "</p>" + renderBlocks(sec) + "</article>" + end + "</div>";
+}
+function endNext() {
+  if (!ses.o.sec) return "";
+  var n = secAfter(ses.o.sec);
+  if (!n) return '<button class="again" data-a="topic" data-v="' + SECMAP[ses.o.sec].t + '"><span><b>Volver al tema</b><span>Has llegado al final de los apuntes que hay</span></span>' + ICON.arrow + "</button>";
+  return '<button class="again" data-a="read" data-v="' + n.id + '"><span><b>Siguiente: ' + esc(n.title) + "</b><span>Tema " + n.t + " · sección " + n.n + " de " + n.of + " · ≈ " + readMins(n) + " min de lectura</span></span>" + ICON.arrow + "</button>";
 }
 
 /* =====================================================================
@@ -1184,11 +1440,28 @@ var A = {
   mode: function (v) { S().settings.mode = v; Store.save(); render(); },
   len: function (v) { S().settings.len = Number(v); Store.save(); render(); },
   start: function () { startRound({ mode: S().settings.mode, len: S().settings.len }); },
-  topic: function (v) { startRound({ mode: "tema", topic: Number(v), len: S().settings.len }); },
+  topic: function (v) { curTopic = Number(v); go("topic"); },
+  topicRound: function (v) { startRound({ mode: "tema", topic: Number(v), len: S().settings.len }); },
+  read: function (v) { openLesson(v, view === "home" ? "home" : "topic"); },
+  nextSec: function (v) { markRead(v); var n = secAfter(v); if (n) openLesson(n.id, "topic"); else { curTopic = SECMAP[v].t; go("topic"); } },
+  check: function (v) { markRead(v); curTopic = SECMAP[v].t; startRound({ mode: "sec", sec: v, len: Math.min(20, (SECQ[v] || []).length) }); },
+  markTopic: function (v) { markRead(topicKey(Number(v))); toast("Tema marcado como estudiado: sus preguntas ya pueden salir en tus rondas."); render(); },
+  theory: function (v) {
+    var q = QMAP[v], sid = SEC_OF[v]; if (!q || !sid) return;
+    var s = SECMAP[sid], pg = pagesOf(q).filter(function (p) { return p >= s.pages[0] && p <= s.pages[1]; })[0];
+    openLesson(sid, view === "simres" ? "simres" : "q", pg);
+  },
+  lessonBack: function () {
+    if (lessonFrom === "q" && ses) go("q");
+    else if (lessonFrom === "simres" && simRes) go("simres");
+    else if (lessonFrom === "home") go("home");
+    else { curTopic = SECMAP[curSec] ? SECMAP[curSec].t : curTopic; go("topic"); }
+  },
+  toggleAll: function () { S().settings.all = !S().settings.all; Store.save(); render(); },
   weak: function () { startRound({ mode: "fallos", len: S().settings.len }); },
   facts: function (v) { var c = CIFRAS[Number(v)]; startRound({ mode: "cifras", facts: c.facts, len: 12 }); },
   survival: startSurvival,
-  sim: function () { if (confirm("¿Empezar un simulacro de 40 preguntas y 40 minutos? Si sales antes de entregar, no se guarda.")) startSim(); },
+  sim: function () { if (confirm("¿Empezar un simulacro de 40 preguntas y 40 minutos? Como el examen real, incluye todo el temario, también lo que aún no has estudiado. Si sales antes de entregar, no se guarda.")) startSim(); },
   pick: function (v) { if (ses.phase !== "ask") return; ses.pick = Number(v); evaluate(ses.pick === 0); },
   tf: function (v) { if (ses.phase !== "ask") return; ses.pick = v === "true"; evaluate(ses.pick === QMAP[cur().id].a); },
   place: function (v) { ses.placed.push(Number(v)); render(); },
@@ -1272,7 +1545,7 @@ Store.init().then(function () { render(); }).catch(function (err) {
   app.innerHTML = '<div class="banner red"><span class="grow">No se pudo cargar el progreso: ' + esc(err && err.message) + ". No toques nada y recarga la página.</span></div>";
 });
 
-window.__dronExam = { Store: Store, buildRound: buildRound, buildSim: buildSim, version: APP_VERSION };
+window.__dronExam = { Store: Store, buildRound: buildRound, buildSim: buildSim, version: APP_VERSION, secOf: SEC_OF, secQ: SECQ, mergeStates: mergeStates };
 })();
 </script>
 </body>
