@@ -171,8 +171,10 @@ documented at the top of `data/topics.js`:
   one of its cited pages (validator fails if a question of a topic with notes fits no section).
 - Write from the Ed.12 PDF only, cover everything on the slides, keep sections to ~3–6 min of reading.
   Turn slide tables into `cards`/`kv` (no wide tables: portrait phone). `ojo` = what the questions test.
-- Status (Nov 2026): notes for topics 1–10. Topics without notes show "apuntes en preparación" with a PDF
-  link and a "Ya lo he estudiado" button. Next: write the rest in the same format.
+- Status (Nov 2026): notes for **all 15 topics** (pages 4–160 of the PDF). NOVEDAD boxes were decided by
+  comparing with the 2022 v6 PDF. The app still supports topics without notes ("apuntes en preparación",
+  PDF link, "Ya lo he estudiado" → `study["tNN"]`) in case a new topic is ever added.
+- Deploy: the user said (Nov 2026) pushing straight to `main` is fine ("this is just for me").
 
 ## 6. Workflow
 
